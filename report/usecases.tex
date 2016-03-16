@@ -1,0 +1,22 @@
+% !TeX root = main.tex
+
+\section*{Use cases}
+The use cases we have defined are:
+\begin{itemize}
+
+\item Personalisation of the petrol card with the issuer terminal (IT):\\
+During the personalisation phase the petrol card will have to be initialised with key material, a card identification number and the current petrol allowance value will be set to zero. This will be done by the card issuer with their issuer terminal. The petrol card will also have to be registered and checked if the person didn't already receive a petrolcard, however this is out of the scope of this document.
+
+\item Charging the petrol card at the charging terminal (CT): \\
+At the charging terminal the owner of the petrol card is able to charge his monthly allowance to the petrol card. The monthly allowance can only be charged in full to the petrol card, so it's not possible to charge it in sub-allowances during the month. The card owner presents his petrol card at the CT and is required to enter a PIN, after this he can choose to charge his allowance or view his current allowance. After the monthly allowance has been charged, the petrol card will be immediately available for getting petrol. The CT will have to check if the petrol card is blocked.
+
+\item Getting petrol at the petrol terminal (PT):
+At the petrol terminal the card owner is able to get petrol. He presents his petrol card to the PT, where he can see his current petrol allowance, and then choose the amount of liters of petrol he wants use up from his card. After choosing, the card owner is able to fill his car with the specified amount of litres. The CT will have to check if the petrol card is blocked.
+
+\item End-of-life: \\
+Once a card reaches end-of-life (EOL), it has to be blocked and possibly decomissioned. The card owner is asked to cut the chip of the petrol card for it to be decomissioned.
+
+\item Stolen Card: \\
+If a card gets stolen, the identification number of the card will have to be blocked. During the night, all petrol terminals and charging terminals will be updated with all the identification number of blocked petrol cards. After 5 years, the petrol card will automatically be blocked and the card owner is asked to cut the chip of the petrol card.
+
+\end{itemize}

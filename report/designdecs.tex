@@ -1,0 +1,38 @@
+\section*{Design decisions}
+During the design of the project, several design decisions were made, they are listed here.
+\begin{itemize}
+\item Smartcards
+\begin{itemize}
+\item PIN Code is used for authenticating the card owner to the terminals.
+\item Public Key Infrastructure is used here to secure communication with terminals.
+\item The card comes to the user, already personalized, but not charged
+\item All communication between smartcard and terminal is encrypted, except for the first communication of the certificate by either one party.
+\end{itemize}
+
+\item Charging terminal
+\begin{itemize}
+\item Charging terminal cannot sign allowance itself but communicates the allowance that has been signed by the backend.
+\item All communication between backend and terminal is encrypted, except for the first communication of the certificate by either one party.
+\item Charging can only be done once a month and only the whole allowance in one time. Allowance cannot be charged in parts.
+\item The charging terminal can see the allowance stored on the smartcard.
+\end{itemize}
+
+\item Petrol terminal
+\begin{itemize}
+\item Will ask for amount of fuel that is to be released. Card holder knows how much fuel is going to be used. Once entered, the card holder does not get rest of allowance back. So the pump terminal is not able to write allowance to the card.
+\end{itemize}
+
+\item Personalization
+\begin{itemize}
+\item We assume this is done in a secure way, so this is out of the scope of the 
+implementation.
+\end{itemize}
+
+ 
+\item Back-end
+\begin{itemize}
+	\item Will have a signed list of blocked cards that are issued to the terminals.
+	\item Will have a list of all the ID numbers associated with each card and terminal in the petrol allowance eco-system.
+	\item Will have the utmost level in the certificate chain apart from the main CA.
+\end{itemize}
+\end{itemize}

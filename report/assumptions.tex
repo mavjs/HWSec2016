@@ -1,0 +1,37 @@
+\section*{Assumptions}
+During the design of the project, several assumptions were made, they are listed here.
+\begin{itemize}
+\item Smartcards
+\begin{itemize}
+	\item A car owner can only have one petrol card
+	\item The smartcard is tamper-resistant, therefore provide integrity and confidentiality of their data and functionality
+\end{itemize}
+
+\item Charging
+\begin{itemize}
+\item Terminals come preinstalled which is done securely
+\item MITM attacks are possible
+\end{itemize}
+
+
+\item Pumping
+\begin{itemize}
+\item The pump is not rigged; will always communicate the right amount of fuel that has been released to the terminal 
+\item Terminals come preinstalled which is done securely
+\item MITM attacks are possible
+\end{itemize}
+
+ 
+\item Personalization
+\begin{itemize}
+\item Employees personalising smartcards will not be able to steal key material.
+\item Employees who created the back-end did not have malicious intentions, such as building a backdoor
+\end{itemize}
+
+\item Back-end
+\begin{itemize}
+\item Maintains a list of blocked card IDs
+\end{itemize}
+\end{itemize}
+
+ 

@@ -1,0 +1,59 @@
+\section*{Security requirements}
+% --- Start of the entire list ---
+\begin{enumerate}
+% --- Start of Confidentiality ---
+\item Confidentiality
+	\begin{enumerate}
+	\item The card identity number shall only be revealed to the personalisation/charging terminal.
+	\item The public key material shall only be revealed to the personalisation/charging/pumping terminal.
+	\item The card usage shall not be known to any terminal.
+	\item The pin code shall only be know to the car-owner and the card itself.
+	\end{enumerate}
+% --- End of Confidentiality ---
+\begin{minipage}{\linewidth}
+% --- Start of Integrity ---
+\item Integrity
+	\begin{enumerate}
+	\item Authentication during charging
+		\begin{enumerate}
+		\item The card shall authenticate to the charging terminal by providing its identity number (IDnr).
+		\item The charging terminal shall authenticate itself to the card.
+		\item The charging terminal shall authenticate itself to the backend to get the monthly allowance.
+		\item The backend shall authenticate to the card of the authenticity of the allowance value.
+		\item The card-owner shall authenticate to the charging terminal its ownership by providing the PIN to the card.
+		\end{enumerate}		
+	\item Authentication during pumping
+		\begin{enumerate}
+		\item The card shall authenticate to the pumping terminal by providing its identity number (IDnr).
+		\item The pumping terminal shall authenticate itself to the card
+The pumping terminal shall authenticate itself to the backend.
+		\item The card-owner shall authenticate to the pumping terminal its ownership by providing the PIN to the card.
+		\item The backend shall authenticate to the pumping terminal of the allowance value stored in the card.
+		\end{enumerate}
+	\item Non-repudiation during charging
+		\begin{enumerate}
+		\item The card shall obtain proof that the allowance value came from the backend via the charging terminal.
+		\end{enumerate}
+	\item Non-repudiation during pumping
+		\begin{enumerate}
+		\item The card shall obtain proof that the changed allowance value came from the pumping terminal.
+		\end{enumerate}
+	\end{enumerate}
+% --- End of Integrity ---
+\end{minipage}
+% --- Start of Availability ---
+\item Availability
+	\begin{enumerate}
+	\item The car-owner should still be able to use the pumping terminal even though the pump has no connection to the master server.
+	\item The compromise of a key material on the card should not bring down the entire petrol system.
+	\end{enumerate}	
+% --- End of Availability ---
+% --- Start of Authorisation ---
+\item Authorisation
+	\begin{enumerate}
+	\item The charging terminal is only authorised to update the allowance value once per month.
+	\item The pumping terminal is authorised to withdraw the allowance value.
+	\end{enumerate}
+% --- End of Authorisation ---
+\end{enumerate}
+% --- End of the entire list ---
