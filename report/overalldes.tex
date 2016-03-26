@@ -73,10 +73,10 @@ PC $\to$ T: $ENC\{SIG\{PIN_{AUTH}\}_{priv_{PC}}, PIN_{AUTH}\}$
 After mutual authentication, PIN validation and authentication of card owner has been done, the petrol card can send its current balance to the petrol terminal for getting petrol. Then, the terminal writes a balance of zero to the petrol card for cases where the card was removed mid transaction. Once the petrol has been pumped and the user successfully terminates the program, the terminal writes a new balance after deducting the pumped petrol amount from the initial balance sent by the card, to the card. And immediately after that the terminal logs the time, identification number, balance and the amount of petrol pumped by the user.
 \\
 \\
-PC $\to$ T: $ENC\{SIG\{B}_{priv_{PC}}, B\}$\\
-T $\to$ PC: $ENC\{SIG\{BZ}\}_{priv_T}, BZ\}$\\
+PC $\to$ T: $ENC\{SIG\{B\}_{priv_{PC}}, B\}$\\
+T $\to$ PC: $ENC\{SIG\{BZ\}_{priv_T}, BZ\}$\\
 T: $Calc\{B = B - UB\}$\\
-T $\to$ PC: $ENC\{SIG\{B}\}_{priv_T}, B\}$\\
+T $\to$ PC: $ENC\{SIG\{B\}_{priv_T}, B\}$\\
 T: $LOG\{TS, ID_{JC}, B, UB\}$\\
 
 \subsubsection(Charging petrol allowance to the petrol card)
