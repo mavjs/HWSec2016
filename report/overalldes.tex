@@ -37,9 +37,8 @@ Public and private keys in each end point will be used in conjunction with the C
         $CVR$ & Certificate Validity Request function \\
         $PIN$ & PIN number \\
         $PIN_{AUTH}$ & Boolean response to indicate validity of PIN \\
-        $C_{pt}$ & current possessed petrol points (in liters) \\
-        $A_{pt}$ & current monthly petrol allowance (in liters) \\
-        $W_{pt}$ & wanted petrol points (in liters) \\
+        $B$ & current petrol points (in liters) \\
+        $UB$ & used up petrol points (in liters) \\
 	\end{tabular}
 
 \subsubsection{Mutual Authentication}
@@ -79,5 +78,7 @@ T: $Calc\{B = B - UB\}$\\
 T $\to$ PC: $ENC\{SIG\{B\}_{priv_T}, B\}$\\
 T: $LOG\{TS, ID_{JC}, B, UB\}$
 
-\subsubsection(Charging petrol allowance to the petrol card)
-PC $\to$ T: $ENC
+\subsubsection{Charging petrol allowance to the petrol card}
+PC $\to$ T: requestAPDU to initiate charging monthly allowance \\
+T: requests monthly allowance from back-end \\
+T $\to$ PC: $ENC\{SIG\{B,TS\}_{priv_T}, B, TS\}$
