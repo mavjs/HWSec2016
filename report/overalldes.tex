@@ -44,14 +44,14 @@ Public and private keys in each end point will be used in conjunction with the C
 
 \subsubsection{Mutual Authentication}
 First the terminals send a command APDU to enable the correct applet from the petrol card for the petrol rationing system. After that the terminal sends its certificate and public key to the petrol card. The petrol card verifies the certificate of the terminal and chooses a symmetric key for encrypted communication. The petrol card signs its identification number with its private key, encrypts that signature and its own certificate with the symmertric key. Then it sends the encrypted signature and certificate together with the symmetric key encrypted by the public key of the terminal. Once the terminal receives the certificate of the petrol card, it verifies it. It then sends signs its won signature with its private key and then combied with a signed version of the identification, encrypts them both with the symmetric key and sends it to the petrol card.
-
+\\
+\\
 T $\to$ PC: commandAPDU to enable applet.\\
 T $\to$ PC: $certificate_{T}, pub_{T}$\\
 PC: $Verify(certificate_{T})$ and choose SK\\
 PC $\to$ T: $ENC\{SIG\{IDnr_{PC}\}_{priv_{PC}}, certificate_{PC}\},  [ENC]_{pub_T}$\\
 T: $Verify(certificate_{PC})$\\
-T $\to$ PC: $ENC\{SIG\{IDnr_{T}\}_{priv_T}, IDnr_{T}\}$
-\\
+T $\to$ PC: $ENC\{SIG\{IDnr_{T}\}_{priv_T}, IDnr_{T}\}$ \\
 and now we have a secure channel between a terminal and a petrol card.
 % %$SK\{[H(IDnr_{S}||Nonce_{S})]_{priv_S}$ where S is senderG$
 
@@ -60,7 +60,7 @@ After mutual authentication has been done, the petrol card will request the cert
 \\
 \\
 PC $\to$ BE: $[CVR + pub_{PC}]_{pub_{BE}}$\\
-BE $\to$ PC: $[H(validity||TS||Certs)_{priv_{BE}}+validity+TS+Certs]_{pub_{PC}}$\\
+BE $\to$ PC: $[H(validity||TS||Certs)_{priv_{BE}}+validity+TS+Certs]_{pub_{PC}}$
 
 \subsubsection{PIN validation and authentication of card owner}
 After mutual authentication has been done, the terminal receives a PIN on the numpad from the card owner, signs the PIN and send the encryption of the signature with the plaintext PIN number to the petrol card. Once the petrol card receives the PIN number, returns the encrypted and signed boolean value (True/False) to the terminal after it verifies the PIN number.
@@ -77,7 +77,7 @@ PC $\to$ T: $ENC\{SIG\{B\}_{priv_{PC}}, B\}$\\
 T $\to$ PC: $ENC\{SIG\{BZ\}_{priv_T}, BZ\}$\\
 T: $Calc\{B = B - UB\}$\\
 T $\to$ PC: $ENC\{SIG\{B\}_{priv_T}, B\}$\\
-T: $LOG\{TS, ID_{JC}, B, UB\}$\\
+T: $LOG\{TS, ID_{JC}, B, UB\}$
 
 \subsubsection(Charging petrol allowance to the petrol card)
 PC $\to$ T: $ENC
