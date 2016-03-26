@@ -17,59 +17,67 @@ Public and private keys in each end point will be used in conjunction with the C
 \subsection{Protocol Descriptions}
 
 \subsubsection{Terminology}
-	\begin{tabular}{*{2}{l}}
-	 $ENC\{X\}$ & encryption function for X with symmetric key agreed to by both parties:\\
-	 $SIG\{X\}_{privkey}$ & signing function for X with private key of sender. \\
-	 $certificate_{T}$ & certificate of Terminal \\
-	 $pub_{T}$ & public key of Terminal \\
- 	 $priv_{T}$ & private key of Terminal  \\
-	 $IDnr_{T}$ & Identification (ID) number of Terminal \\
-	 $Nonce_{T}$ & Nonce from Terminal \\
-	 $SK$ & Symmetric Key \\
-	 $Verify$ & Certificate Verification function \\
-	 $H$ & Cryptographic Hash function \\
-	 $Slog$ & Secure Logging function \\
-	 $T$ & Terminal (charging/petrol) \\
-	 $JC$ & JavaCard (smartcard) \\
-	 $BE$ & Back-end (most closet communication to CA)\\
-	 $CVR$ & Certificate Validity Request \\
-	 $PIN$ & PIN number \\
-	 $PIN_{AUTH}$ & True or False response based on in-/valid PIN \\
-	 $C_{pt}$ & current possessed petrol points (in liters) \\
-	 $A_{pt}$ & current monthly petrol allowance (in liters) \\
-	 $W_{pt}$ & wanted petrol points (in liters) \\
-
+    \begin{tabular}{*{2}{l}}
+        $ENC\{X\}$ & encryption function for X with symmetric key agreed to by both parties\\
+        $SIG\{X\}_{privkey}$ & signing function for X with private key of sender \\
+        $[X]_{pubkey}$ & encryption function for x with a public key by the sender \\
+        $certificate_{T}$ & certificate of Terminal \\
+        $pub_{T}$ & public key of Terminal \\
+        $priv_{T}$ & private key of Terminal  \\
+        $ID_{T}$ & Identification (ID) number of Terminal \\
+        % $Nonce_{T}$ & Nonce from Terminal \\
+        $SK$ & Symmetric Key \\
+        $Verify$ & Certificate Verification function \\
+        % $H$ & Cryptographic Hash function \\
+        $Log$ & Logging function to keep track of transactions \\
+        $T$ & Terminal (charging/petrol) \\
+        $PC$ & Petrol Card \\
+        $BE$ & Back-end \\
+        $TS$ & Timestamp \\
+        $CVR$ & Certificate Validity Request function \\
+        $PIN$ & PIN number \\
+        $PIN_{AUTH}$ & Boolean response to indicate validity of PIN \\
+        $C_{pt}$ & current possessed petrol points (in liters) \\
+        $A_{pt}$ & current monthly petrol allowance (in liters) \\
+        $W_{pt}$ & wanted petrol points (in liters) \\
 	\end{tabular}
-	
-\subsubsection{Mutual Authentication}
-T $\to$ JC: commandAPDU to enable applet.\\
-T $\to$ JC: $certificate_{T}, pub_{T}$\\
-JC: $Verify(certificate_{T})$ and choose SK\\
-JC $\to$ T: $ENC\{SIG\{IDnr_{JC}\}, certificate_{JC}\},  [ENC]_{pub_T}$\\
-T $\to$: $Verify(certificate_{JC})$\\
-T $\to$ JC: $SK\{[H(IDnr_{T}||Nonce_{T})]_{priv_T}+IDnr_{T}+Nonce_{T}\}$
 
+\subsubsection{Mutual Authentication}
+First the terminals send a command APDU to enable the correct applet from the petrol card for the petrol rationing system. After that the terminal sends its certificate and public key to the petrol card. The petrol card verifies the certificate of the terminal and chooses a symmetric key for encrypted communication. The petrol card signs its identification number with its private key, encrypts that signature and its own certificate with the symmertric key. Then it sends the encrypted signature and certificate together with the symmetric key encrypted by the public key of the terminal. Once the terminal receives the certificate of the petrol card, it verifies it. It then sends signs its won signature with its private key and then combied with a signed version of the identification, encrypts them both with the symmetric key and sends it to the petrol card.
+
+T $\to$ PC: commandAPDU to enable applet.\\
+T $\to$ PC: $certificate_{T}, pub_{T}$\\
+PC: $Verify(certificate_{T})$ and choose SK\\
+PC $\to$ T: $ENC\{SIG\{IDnr_{PC}\}_{priv_{PC}}, certificate_{PC}\},  [ENC]_{pub_T}$\\
+T: $Verify(certificate_{PC})$\\
+T $\to$ PC: $ENC\{SIG\{IDnr_{T}\}_{priv_T}, IDnr_{T}\}$
+\\
+and now we have a secure channel between a terminal and a petrol card.
 % %$SK\{[H(IDnr_{S}||Nonce_{S})]_{priv_S}$ where S is senderG$
 
 \subsubsection{Certificate Validity Request}
-Note: this is considered to be done via a secure communication after mutually authenticating between smartcard $\to$ terminal, terminal $\to$ backend and smartcard $\to$ backend through terminal.
+After mutual authentication has been done, the petrol card will request the certificate revocation list from the back-end through the terminal. In this case, the terminal just acts as a relay between the petrol card and the back-end.
 \\
 \\
-JC $\to$ BE: $[CVR + pub_{JC}]_{pub_BE}$\\
-BE $\to$ JC: $[H(validity||TS||Certs)_{priv_BE}+validity+TS+Certs]_{pub_JC}$\\
+PC $\to$ BE: $[CVR + pub_{PC}]_{pub_{BE}}$\\
+BE $\to$ PC: $[H(validity||TS||Certs)_{priv_{BE}}+validity+TS+Certs]_{pub_{PC}}$\\
 
-\subsubsection{PIN validation and authorisation}
-Note: this is considered to be done via a secure communication after mutually authenticating each other.
+\subsubsection{PIN validation and authentication of card owner}
+After mutual authentication has been done, the terminal receives a PIN on the numpad from the card owner, signs the PIN and send the encryption of the signature with the plaintext PIN number to the petrol card. Once the petrol card receives the PIN number, returns the encrypted and signed boolean value (True/False) to the terminal after it verifies the PIN number.
 \\
 \\
-T $\to$ JC: $SK\{[H(PIN||Nonce_{T})]_{priv_T}+PIN+Nonce_{T}\}$\\
-JC $\to$ T: $SK\{[H(PIN_{AUTH}||Nonce_{JC})]_{priv_JC}+PIN_{AUTH}+Nonce_{JC}\}$\\
+T $\to$ PC: $ENC\{SIG\{PIN\}_{priv_T}, PIN\}$\\
+PC $\to$ T: $ENC\{SIG\{PIN_{AUTH}\}_{priv_{PC}}, PIN_{AUTH}\}$
 
-\subsubsection{Petrol usage}
-Note: this is considered to be done via a secure communication after mutually authenticating each other.
+\subsubsection{Getting petrol from the petrol terminal}
+After mutual authentication, PIN validation and authentication of card owner has been done, the petrol card can send its current balance to the petrol terminal for getting petrol. Then, the terminal writes a balance of zero to the petrol card for cases where the card was removed mid transaction. Once the petrol has been pumped and the user successfully terminates the program, the terminal writes a new balance after deducting the pumped petrol amount from the initial balance sent by the card, to the card. And immediately after that the terminal logs the time, identification number, balance and the amount of petrol pumped by the user.
 \\
 \\
-JC $\to$ T: $SK\{[H(A_{pt}||C_{pt}||Nonce_{JC})]_{priv_JC}+A_{pt}+C_{pt}+Nonce_{JC}\}$\\
-T $\to$ JC: $SK\{[H(W_{pt}||C_{pt}||Nonce_{T})]_{priv_T}+W_{pt}+C_{pt}+Nonce_{T}\}$\\
-JC: $Slog([H(IDnr_{T}||W_{pt}||C_{pt})]_{priv_T}+IDnr_{T}+W_{pt}+C_{pt})$\\
-T: $Slog([H(IDnr_{JC}||W_{pt}||C_{pt})]_{priv_JC}+IDnr_{JC}+W_{pt}+C_{pt})$\\
+PC $\to$ T: $ENC\{SIG\{B}_{priv_{PC}}, B\}$\\
+T $\to$ PC: $ENC\{SIG\{BZ}\}_{priv_T}, BZ\}$\\
+T: $Calc\{B = B - UB\}$\\
+T $\to$ PC: $ENC\{SIG\{B}\}_{priv_T}, B\}$\\
+T: $LOG\{TS, ID_{JC}, B, UB\}$\\
+
+\subsubsection(Charging petrol allowance to the petrol card)
+PC $\to$ T: $ENC
