@@ -1,6 +1,6 @@
 \section{Overall design}
 \subsection{PIN codes}
-The user will have to use PIN code to verify ownership of the smartcard via the terminal. The terminal will send this PIN + Nonce signed by its private key to the smartcard. By which the smartcard will reply with whether the PIN number is correct or not.
+The user will have to enter a PIN code on the terminal numpad to verify ownership of the petrolcard to the terminal. The terminal will send this PIN + signed by its private key to the smartcard. By which the smartcard will reply with whether the PIN number is correct or not.
 
 \subsection{Cryptography}
 A certificate consisting of a public and private key will be first created on the back-end (the overall system acting as the Certificate Authority). Whenever a new smartcard is personalized, it will store the certificate of the CA, create public and private key for itself and a time-stamp of the last update of certificate revocation list which is signed by the CA certificate. Each terminal will have the same setup: CA certificate, its own public and private key, and signed time-stamp of last updated certificate revocation list.
@@ -18,6 +18,8 @@ Public and private keys in each end point will be used in conjunction with the C
 
 \subsubsection{Terminology}
 	\begin{tabular}{*{2}{l}}
+	 $ENC\{X\}$ & encryption function for X with symmetric key agreed to by both parties:\\
+	 $SIG\{X\}_{privkey}$ & signing function for X with private key of sender. \\
 	 $certificate_{T}$ & certificate of Terminal \\
 	 $pub_{T}$ & public key of Terminal \\
  	 $priv_{T}$ & private key of Terminal  \\
@@ -36,15 +38,18 @@ Public and private keys in each end point will be used in conjunction with the C
 	 $C_{pt}$ & current possessed petrol points (in liters) \\
 	 $A_{pt}$ & current monthly petrol allowance (in liters) \\
 	 $W_{pt}$ & wanted petrol points (in liters) \\
+
 	\end{tabular}
 	
 \subsubsection{Mutual Authentication}
 T $\to$ JC: commandAPDU to enable applet.\\
-T $\to$ JC: $certificate_{T}+pub_{T}$\\
-JC: $Verify(certificate_{T})$\\
-JC $\to$ T: $SK\{[H(IDnr_{JC}||Nonce_{JC})]_{priv_JC}+IDnr_{JC}+Nonce_{JC}+certificate_{JC}\}+[SK]_{pub_T}$\\
+T $\to$ JC: $certificate_{T}, pub_{T}$\\
+JC: $Verify(certificate_{T})$ and choose SK\\
+JC $\to$ T: $ENC\{SIG\{IDnr_{JC}\}, certificate_{JC}\},  [ENC]_{pub_T}$\\
 T $\to$: $Verify(certificate_{JC})$\\
 T $\to$ JC: $SK\{[H(IDnr_{T}||Nonce_{T})]_{priv_T}+IDnr_{T}+Nonce_{T}\}$
+
+% %$SK\{[H(IDnr_{S}||Nonce_{S})]_{priv_S}$ where S is senderG$
 
 \subsubsection{Certificate Validity Request}
 Note: this is considered to be done via a secure communication after mutually authenticating between smartcard $\to$ terminal, terminal $\to$ backend and smartcard $\to$ backend through terminal.
