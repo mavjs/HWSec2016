@@ -1,36 +1,39 @@
-\section*{Assumptions}
+\section{Assumptions}
 During the design of the project, several assumptions were made, they are listed here.
 \begin{itemize}
 \item Smartcards
 \begin{itemize}
-	\item A car owner can only have one petrol card
-	\item The smartcard is tamper-resistant, therefore provide integrity and confidentiality of their data and functionality
+	\item A car owner can only have one petrolcard.
+	\item The petrolcard is tamper-resistant, therefore provide integrity and confidentiality of their data and functionality.
 \end{itemize}
 
 \item Charging
 \begin{itemize}
-\item Terminals come preinstalled which is done securely
-\item MITM attacks are possible
+\item Terminals come preinstalled which is done securely.
+\item MITM attacks should not be possible.
+\item Charging terminal will have a reliable clock.
 \end{itemize}
 
 
 \item Pumping
 \begin{itemize}
-\item The pump is not rigged; will always communicate the right amount of fuel that has been released to the terminal 
-\item Terminals come preinstalled which is done securely
-\item MITM attacks are possible
+\item The pump is trusted to always communicate the right amount of fuel that has been released to the terminal.
+\item Terminals come preinstalled which is done securely.
+\item MITM attacks should not be possible.
+\item Pumping terminal will have a reliable clock.
 \end{itemize}
 
  
 \item Personalization
 \begin{itemize}
-\item Employees personalising smartcards will not be able to steal key material.
-\item Employees who created the back-end did not have malicious intentions, such as building a backdoor
+\item Employees have been properly instructed and are trustworthy to not steal key material during the personalization of the petrolcards.
+\item Employees who created the back-end did not have malicious intentions, such as building a backdoor.
+\item Personalization terminals will have a reliable clock.
 \end{itemize}
 
 \item Back-end
 \begin{itemize}
-\item Maintains a list of blocked card IDs
+\item Maintains a list of blocked card IDs.
 \end{itemize}
 \end{itemize}
 

@@ -1,25 +1,30 @@
-\section*{Design decisions}
+\section{Design decisions}
 During the design of the project, several design decisions were made, they are listed here.
 \begin{itemize}
 \item Smartcards
 \begin{itemize}
-\item PIN Code is used for authenticating the card owner to the terminals.
+\item PIN code is used for authenticating the card owner to the terminals.
 \item Public Key Infrastructure is used here to secure communication with terminals.
 \item The card comes to the user, already personalized, but not charged
-\item All communication between smartcard and terminal is encrypted, except for the first communication of the certificate by either one party.
+\item All communication between smartcard and terminal is signed \& MACed, except for the first communication of the certificate by either one party.
 \end{itemize}
 
 \item Charging terminal
 \begin{itemize}
 \item Charging terminal cannot sign allowance itself but communicates the allowance that has been signed by the backend.
-\item All communication between backend and terminal is encrypted, except for the first communication of the certificate by either one party.
+\item All communication between backend and terminal is signed \& MACed, except for the first communication of the certificate by either one party.
 \item Charging can only be done once a month and only the whole allowance in one time. Allowance cannot be charged in parts.
 \item The charging terminal can see the allowance stored on the smartcard.
 \end{itemize}
 
 \item Petrol terminal
 \begin{itemize}
-\item Will ask for amount of fuel that is to be released. Card holder knows how much fuel is going to be used. Once entered, the card holder does not get rest of allowance back. So the pump terminal is not able to write allowance to the card.
+%\item Will ask for amount of fuel that is to be released. Card holder knows how much fuel is going to be used. Once entered, the card holder does not get rest of allowance back. So the pump terminal is not able to write allowance to the card.
+\item Card owner will have to insert the petrolcard in the petrol terminal for the whole transaction. The petrol terminal will receive the current petrol allowance on the card, the flow of petrol will be terminated if it reaches this number. If the petrol allowance is removed before the transaction is complete, the full petrol allowance will be removed upon the next presentation at a charging or petrol terminal. 
+
+% until the fuel amount is chosen by the card owner. Petrol allowance on the card is provided to terminal, if the card is removed or this amount has been reached, the flow of petrol will be terminated. If the petrolcard is removed during this moment, all petrol allowance will be removed from the card ???
+%petrol allowance on the card will be decreased before its added to petrol terminal
+
 \end{itemize}
 
 \item Personalization
