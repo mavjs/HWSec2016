@@ -5,20 +5,20 @@
 % --- Start of Confidentiality ---
 \item Confidentiality
 	\begin{enumerate}
-	\item The card identity number shall only be revealed to the  personalisation/charging/pump terminal after the terminal has been authenticated to the petrolcard.
+	\item The card identity number shall only be revealed to the  personalisation/charging/pump terminal after the terminal has been authenticated to the petrol card.
 	\item The public key material shall only be revealed to the personalisation/charging/pump terminal after the terminal has been authenticated.
 	\item The card usage shall not be revealed to any kind of terminal.
-	\item The PIN code shall only be know by the petrol card and the petrolcard owner. 
-	\item The monthly petrol allowance update shall only be revealed after the terminal has been authenticated to the backend. 
+	\item The PIN code shall only be know by the petrol card and the petrol card owner. 
+	\item The monthly petrol allowance update shall only be revealed after the terminal has been authenticated to the back-end. 
 	\end{enumerate}
 % --- End of Confidentiality ---
 %\begin{minipage}{\linewidth}
 % --- Start of Integrity ---
 \item Integrity
 	\begin{enumerate}
-	\item The petrol allowance on the petrolcard can only be altered by an authenticated terminal.
-	\item The identity number of the petrolcard cannot be altered. 
-	\item The public and private keys of the petrolcard cannot be altered.
+	\item The petrol allowance on the petrol card can only be altered by an authenticated terminal.
+	\item The identity number of the petrol card cannot be altered. 
+	\item The public and private keys of the petrol card cannot be altered.
 	\item The logs on the terminal can only be altered by the terminal itself. 
 	\end{enumerate}
 % --- End of Integrity ---
@@ -27,20 +27,17 @@
 % --- Start of Authentication ---
 \item Authentication during charging
 		\begin{enumerate}
-		\item The petrolcard shall authenticate to the charging terminal by using it's public and private key% its identity number (IDnr).
-		\item The charging terminal shall authenticate itself to the petrolcard using its public and private key.
-		\item The charging terminal shall authenticate itself to the back-end with the public and private key to receive the monthly petrol allowance that can be written to the petrolcards.
-		\item \textcolor{red}{The back-end shall authenticate to the petrolcard using public and private keys of the authenticity of the allowance value.}
-		\item \textcolor{red}{The card-owner shall authenticate itself towards the charging terminal and petrolcard by entering the correct PIN to the petrolcard.}
+		\item The petrol card shall authenticate to the charging terminal by using its public and private key% its identity number (IDnr).
+		\item The charging terminal shall authenticate itself to the petrol card  by using its public and private key.
+		\item The charging terminal shall authenticate itself to the back-end with the public and private key to receive the monthly petrol allowance that can be written to the petrol cards.
 		\end{enumerate}	
 		
 \item Authentication during pumping
 	\begin{enumerate}
-	\item The petrolcard shall authenticate to the pumping terminal by its public and private key. % providing its identity number (IDnr).
-	\item The pumping terminal shall authenticate itself to the petrolcard by public and private keys
-	\item The pumping terminal shall authenticate itself to the back-end by public and private keys.
-	\item The card owner shall authenticate to the pumping terminal and petrolcard its ownership by providing the PIN to the petrolcard.
-	\item \textcolor{red}{The back-end shall authenticate to the pumping terminal of the allowance value stored in the card.}
+	\item The petrol card shall authenticate to the pumping terminal by using its public and private key. % providing its identity number (IDnr).
+	\item The pumping terminal shall authenticate itself to the petrol card by using its public and private keys
+	\item The pumping terminal shall authenticate itself to the back-end by using its public and private keys.
+	\item The card owner shall authenticate to the pumping terminal and petrol card of its ownership by providing the PIN to the petrol card.
 	\end{enumerate}		
 % --- End of Authentication ---
 
@@ -56,8 +53,8 @@
 % --- Start of Authorisation ---
 \item Authorisation
 	\begin{enumerate}
-	\item The charging terminal is only authorised to update the petrol allowance on the petrolcard once each month.
-	\item The pumping terminal is authorised to withdraw the petrol allowance during the pumping off the petrolcard.
+	\item The charging terminal is only authorised to update the petrol allowance on the petrol card once every month.
+	\item The pumping terminal is authorised to withdraw the petrol allowance during petrol pumping from the petrol card.
 	\end{enumerate}
 % --- End of Authorisation ---
 
@@ -65,10 +62,10 @@
 % --- Start of Non-repudiation ---
 \item Non-repudiation
 	\begin{enumerate}
-%		\item The petrolcard shall obtain proof that the allowance value came from the back-end via the charging terminal.
-%		\item The petrolcard shall obtain proof that the changed allowance value came from the pumping terminal.
-		\item The charging terminal can prove to the backend that it charged the monthly allowance to a valid petrolcard. 
-		\item The pump terminal can prove to the backend that it collected petrol allowance from a valid petrol card.
+%		\item The petrol card shall obtain proof that the allowance value came from the back-end via the charging terminal.
+%		\item The petrol card shall obtain proof that the changed allowance value came from the pumping terminal.
+		\item The charging terminal can prove to the back-end that it charged the monthly allowance to a valid petrol card. 
+		\item The pump terminal can prove to the back-end that it collected petrol allowance from a valid petrol card.
 	\end{enumerate}
 % --- End of Non-repudiation ---
 
