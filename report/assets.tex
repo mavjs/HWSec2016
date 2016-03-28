@@ -3,23 +3,28 @@ Our project case involves the following assets:
 \begin{itemize}
 \item Petrol
 
-\item Smartcards
+\item Petrol card
 \begin{itemize}
- \item Current allowance on the card
+ \item Current balance on the petrol card
  \item Card identification number
  \item PIN code
  \item Timestamp indicating last charge
- \item Public and private key created during personalisation
+ \item Public and private key; created during personalisation
  \item Certificate from CA
  \item Signed timestamp of last checked revocation list by CA
- \item List of revoked certificates
 \end{itemize}
 
+ \item Personalization terminals
+ \begin{itemize}
+	\item Certificate from CA
+	\item Public and private key created for secure communication
+ \end{itemize}
+ 
  \item Charging terminals
  \begin{itemize}
- 	\item Current monthly allowance to be charged to cards
+ 	\item Current monthly allowance that will be charged to all petrol cards
  	\item List of blocked cards
- 	\item Public and private key created during personalisation
+ 	\item Public and private key; created during personalisation
  	\item Signed timestamp of last checked revocation list by CA
   	\item Certificate from CA
 	\item List of revoked certificates
@@ -30,24 +35,18 @@ Our project case involves the following assets:
  \begin{itemize}
   	\item Certificate from CA
  	\item List of blocked cards
- 	\item Public and private key created during personalisation
+ 	\item Public and private key; created during personalisation
  	\item Signed timestamp of last checked revocation list by CA
  	\item List of revoked certificates
  \end{itemize}
 
- 
- \item Personalization terminals
- \begin{itemize}
-	\item Certificate from CA
-	\item Public and private key created for secure communication
- \end{itemize}
-
- 
  \item Back-end
  \begin{itemize}
  	\item Public and private key
  	\item List of revoked certificates
  	\item List of ID numbers associated with each terminal and cards
+ 	\item list of revoked petrol cards
+ 	\item Current monthly allowance that will be provided to all charging terminals
  \end{itemize}
 
 \end{itemize}

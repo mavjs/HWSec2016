@@ -1,39 +1,42 @@
 \section{Assumptions}
 During the design of the project, several assumptions were made, they are listed here.
 \begin{itemize}
-\item Smartcards
+\item Petrol card
 \begin{itemize}
 	\item A car owner can only have one petrol card.
 	\item The petrol card is tamper-resistant, therefore provide integrity and confidentiality of their data and functionality.
+	\item The balance on the petrol card can only be changed by an authenticated charging terminal
+	\item Key material cannot be copied off the petrol card
 \end{itemize}
 
-\item Charging
-\begin{itemize}
-\item Terminals come preinstalled, which is done securely.
-\item MITM attacks should not be possible.
-\item Charging terminal will have a reliable clock.
-\end{itemize}
-
-
-\item Pumping
-\begin{itemize}
-\item The pump is trusted to always communicate the right amount of fuel that has been released to the terminal.
-\item Terminals come preinstalled, which is done securely.
-\item MITM attacks should not be possible.
-\item Pumping terminal will have a reliable clock.
-\end{itemize}
-
- 
 \item Personalization
 \begin{itemize}
 \item Employees have been properly instructed and are trustworthy to not steal key material during the personalization of the petrol cards.
 \item Employees who created the back-end did not have malicious intentions, such as building a backdoor.
 \item Personalization terminals will have a reliable clock.
+\item Key material cannot be copied off the personalisation terminal
+\end{itemize}
+
+\item Charging
+\begin{itemize}
+\item Charging terminals come pre-installed, or are installed by a trusted company
+\item Charging terminal will have a reliable clock.
+\item Key material cannot be copied off the charging terminal
+\end{itemize}
+
+\item Pumping
+\begin{itemize}
+\item Pumping terminals come pre-installed, or are installed by a trusted company
+\item The pump is trusted to always communicate the right amount of fuel that has been released to the pumping terminal.
+\item Pumping terminal will have a reliable clock.
+\item Key material cannot be copied off the pumping terminal
+\item The pumping terminal is able to store logs of transactions without compromising the integrity or confidentiality of the logs
 \end{itemize}
 
 \item Back-end
 \begin{itemize}
-\item Maintains a list of blocked card IDs.
+\item The key material of the CA cannot be copied
+\item The revocation list maintained by the back end cannot be altered in such a way that already revoked petrol cards or terminal will be removed by the revocation list. 
 \end{itemize}
 \end{itemize}
 

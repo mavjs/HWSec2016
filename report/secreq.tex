@@ -9,16 +9,16 @@
 	\item The public key material shall only be revealed to the personalisation/charging/pump terminal after the terminal has been authenticated.
 	\item The card usage shall not be revealed to any kind of terminal.
 	\item The PIN code shall only be know by the petrol card and the petrol card owner. 
-	\item The monthly petrol allowance update shall only be revealed after the terminal has been authenticated to the back-end. 
+	\item The back end will only update the monthly allowance to the charging terminals after the charging terminal has been authenticated.
 	\end{enumerate}
 % --- End of Confidentiality ---
 %\begin{minipage}{\linewidth}
 % --- Start of Integrity ---
 \item Integrity
 	\begin{enumerate}
-	\item The petrol allowance on the petrol card can only be altered by an authenticated terminal.
+	\item The petrol balance on the petrol card can only be altered by an authenticated terminal.
 	\item The identity number of the petrol card cannot be altered. 
-	\item The public and private keys of the petrol card cannot be altered.
+	\item The public and private keys of the petrol card and terminals cannot be altered.
 	\item The logs on the terminal can only be altered by the terminal itself. 
 	\end{enumerate}
 % --- End of Integrity ---
@@ -41,20 +41,11 @@
 	\end{enumerate}		
 % --- End of Authentication ---
 
-
-% --- Start of Availability ---
-\item Availability
-	\begin{enumerate}
-	\item \textcolor{red}{The car-owner should still be able to use the pumping terminal even if the pump terminal has no connection to the back-end.}
-	\end{enumerate}	
-% --- End of Availability ---
-
-
 % --- Start of Authorisation ---
 \item Authorisation
 	\begin{enumerate}
-	\item The charging terminal is only authorised to update the petrol allowance on the petrol card once every month.
-	\item The pumping terminal is authorised to withdraw the petrol allowance during petrol pumping from the petrol card.
+	\item The charging terminal is only authorised to update the petrol allowance to the petrol card once every month.
+	\item The pumping terminal is authorised to withdraw petrol balance during petrol pumping from the petrol card.
 	\end{enumerate}
 % --- End of Authorisation ---
 

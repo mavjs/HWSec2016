@@ -1,5 +1,5 @@
 \section{Attacker model}
-In the design of the system we will assume that each terminal can safely store the CA certificate, its own public and private key, and the list of revoked certificates. At any point in time it is likely that an attacker will perform a MiTM or a card tear. The compromise of a key material on the card should not bring down the entire petrol system. The attackers will not be able to tamper with the petrolcards, nor will they be able to build a backdoor in the software of the terminals.
+At any point in time it is likely that an attacker will perform a MiTM or a card tear. The compromise of a key material on the card should not bring down the entire petrol system. The attackers will not be able to tamper with the petrol cards, nor will they be able to build a backdoor in the software of the terminals.
 
 We will now broadly define $3$ categories of attackers, although overlap may occur. For example research may fall into the hands of criminals. 
 
@@ -7,14 +7,13 @@ We will now broadly define $3$ categories of attackers, although overlap may occ
 
 \item (Organised) criminals
 
-This groups capabilities will include organised crime such as extortion and violence to obtain legitimately issued petrolcards. On the other hand it will also include card owners who may intentionally try to game the system by removing the petrolcard from the terminal during a transaction. This group will mostly try to obtain more petrol than rationed.
+This groups capabilities will include organised crime such as extortion and violence to obtain legitimately issued petrol cards. On the other hand it will also include card owners who may intentionally try to game the system by removing the petrol card from the terminal during a transaction. This group will mostly try to obtain more petrol than rationed.
 
 \item Insiders
 
 Members of this group will have some sort of access to the inner workings of the system. This includes configuration of any of the terminals the system uses within the limits allowed by the software. It also includes the designers of the system, who are not to be trusted with the master key. This group may try to bring down or sabotage the workings of the system for a larger group of users.
 
 \item Researchers
-
-We assume the Kerckhoffs principle, as such this group will be assumed to have a full specification of the protocols the system uses. We shall also assume this group can intercept and manipulate any traffic between the card and a terminal. This group will typically include researchers at an university, which gives an indication of the amount of time and money available. The goal of this group will be to break the security model in any way worthy of a publication.
+This group is sometimes provided with full specification on a system or it's protocols. They are likely to break protocols such that they can intercept and manipulate any traffic between the petrol card and a terminal. This group will typically include researchers at an university, which gives an indication of the amount of time and money available. The goal of this group will be to break the security model in any way worthy of a publication.
  
 \end{itemize}

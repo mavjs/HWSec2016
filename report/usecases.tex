@@ -5,18 +5,18 @@ The use cases we have defined are:
 \begin{itemize}
 
 \item Personalisation of the petrol card with the issuer terminal (IT):\\
-During the personalisation phase the petrol card will have to be initialised with key material, a card identification number and the current petrol allowance value will be set to zero. This will be done by the card issuer with their issuer terminal. The petrol card will also have to be registered and checked if the person didn't already receive a petrolcard, however this is out of the scope of this document.
+During the personalisation phase the petrol card will have to be initialised with key material, a card identification number and the current petrol balance will be set to zero. This will be done by the card issuer with their issuer terminal. The petrol card will also have to be registered to a car owner and a check needs to be in place to see if the car owner didn't already receive a petrol card, however this is out of the scope of this document.
 
 \item Charging the petrol card at the charging terminal (CT): \\
-Each month the charging terminal will receive a petrol allowance update. This update determines the petrol allowance that will be written to all petrolcards. Once a petrolcard presents itself, the charging terminal will have to validate if the petrolcard is still valid, if it is the cardowner will have to enter a PIN to authenticate itself to the terminal. If the petrolcard owner wishes to charge his petrol allowance (the other option is to only view the current petrol balance on the card),   the charging terminal will write the monthly petrol allowance to the petrolcard. Sub-charges during the month will not be possible. The petrol allowance on the petrolcard will be immediately available for getting petrol. 
+Each month the charging terminal will receive a petrol allowance update. This update determines the petrol allowance that will be written to all petrol cards. Once a petrol card presents itself, the charging terminal will have to validate if the petrol card is still valid, if it is the card owner will have to enter a PIN to authenticate himself to the terminal. The card owner can then choose to either view his current balance or charge the monthly petrol allowance to his petrol card balance. Writing petrol allowances to petrol card balances will not be possible once, sub-charges during the month will not be possible. The new petrol balance on the petrol card will be immediately available for getting petrol. 
 
-\item Getting petrol at the petrol terminal (PT):
-At the petrol terminal the card owner is able to get petrol. He presents his petrol card to the PT, where he can see his current petrol allowance, and then choose the amount of liters of petrol he wants use up from his card. After choosing, the card owner is able to fill his car with the specified amount of litres. The CT will have to check if the petrol card is blocked.
+\item Getting petrol at the petrol terminal (PT):\\
+At the petrol terminal the card owner is able to get petrol. He presents his petrol card to the PT, where he can see his current petrol allowance, after choosing the type of petrol, the PT will remove the current petrol balance from the petrol card by writing a balance of zero. After the transaction has been completed the updated balance will be written back to the petrol card. 
 
 \item End-of-life: \\
 Once a card reaches end-of-life (EOL), it has to be blocked and possibly decomissioned. 
 
 \item Stolen Card: \\
-If a card gets stolen, the identification number of the card will have to be blocked. During the night, all petrol terminals and charging terminals will be updated with all the identification number of blocked petrol cards. After 5 years, the petrol card will automatically be blocked and the card owner is asked to cut the chip of the petrol card.
+If a card gets stolen, the identification number of the card and all it's key material will have to be blocked and revoked. During the night, all petrol and charging terminals will be updated with a list of blocked petrol cards. After 5 years, the petrol card will automatically be blocked.
 
 \end{itemize}
