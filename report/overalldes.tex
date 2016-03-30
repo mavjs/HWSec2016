@@ -1,6 +1,6 @@
 \section{Overall design}
 \subsection{PIN codes}
-The user will have to enter a PIN code on the terminal numpad to verify ownership of the petrol card to the terminal. The terminal will send the PIN signed by its private key with the plain text of the PIN to the petrol card through the secure channel. By which the petrol card will reply with whether the PIN number is correct or not.
+The user will have to enter a PIN code on the terminal numpad to verify ownership of the petrol card to the terminal. The terminal will send the PIN signed by its private key with the plain text of the PIN to the petrol card through the mutually authenticated secure channel. By which the petrol card will reply with whether the PIN number is correct or not.
 
 \subsection{Cryptography}
 A certificate consisting of a public and private key will be first created on the back-end (the overall system acting as the Certificate Authority). Whenever a new petrol card is personalized, it will store the certificate of the main CA, create public and private key for itself and a timestamp of the last update of certificate revocation list which is signed by the main CA certificate. Each terminal will have the same setup: main CA certificate, its own public and private key, and signed timestamp of the last updated certificate revocation list.
@@ -85,9 +85,12 @@ PC \to T&: ENC\{SIG[PIN_{AUTH}]_{priv_{PC}}, PIN_{AUTH}\}
 \subsubsection{Getting petrol from the petrol terminal}
 After mutual authentication, PIN validation and authentication of card owner has been done, the petrol card can send its current balance to the petrol terminal for getting petrol. Then, the terminal writes a balance of zero to the petrol card for cases where the card was removed mid transaction. Once the petrol has been pumped and the user successfully terminates the program, the terminal writes a new balance after deducting the pumped petrol amount from the initial balance sent by the card, to the card. And immediately after that the terminal logs the time, identification number, balance and the amount of petrol pumped by the user.
 
+The terminal logging the timestamp, identification number and the balance before the petrol being pumped guarantees security requirement 6(b).
+
 \begin{equation}\nonumber
 \begin{split}
 PC \to T&: ENC\{SIG[B]_{priv_{PC}}, B\}\\
+T&: LOG(TS, ID_{PC}, B) \\
 T \to PC&: ENC\{SIG[BZ]_{priv_T}, BZ\}\\
 T&: Calc(B = B - UB)\\
 T \to PC&: ENC\{SIG[B]_{priv_T}, B\}\\
@@ -99,16 +102,19 @@ T&: LOG(TS, ID_{PC}, B, UB)
 \subsubsection{Charging petrol allowance to the petrol card}
 After mutual authentication, PIN validation and authentication of card owner
 has been done, the petrol card can ask the charging terminal to charge its
-allowed monthly petrol balance. Then the terminal starts a secure channel
-between itself and the back-end to get the monthly petrol allowance, and then
+allowed monthly petrol balance. Then the terminal starts a mutually
+authenticated secure channel between itself and the back-end to get the monthly petrol allowance, and then
 writes those values back to the petrol card.\\
 
-The terminal starting a secure channel with the back-end to get the monthly petrol allowance guarantees security requirement 1(e) \& 3(c).
+The terminal starting a mutually authenticated secure channel with the back-end to get the monthly petrol allowance guarantees security requirement 1(e) \& 3(c).\\
+
+The terminal logging the timestamp, identity number and the balance being written to the petrol card guarantees security requirement 6(a).
 
 \begin{equation}\nonumber
 \begin{split}
 PC \to T&: \text{request APDU to initiate charging monthly allowance} \\
-T&: \text{creates secure channel and requests monthly allowance from back-end} \\
+    T&: \text{requests monthly allowance from back-end through the secure channel} \\
+T&: Log(TS, ID_{PC}, B) \\
 T \to PC&: ENC\{SIG[B,TS]_{priv_{BE}}, B, TS\}
 \end{split} 
 \end{equation}
