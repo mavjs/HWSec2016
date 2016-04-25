@@ -1,0 +1,17 @@
+package backend;
+
+import java.util.LinkedList;
+
+public class BackendJC {
+	public static void main(String[] arg){
+		Backend be = new Backend();
+		if (!testrevokedLists()) {
+			System.out.println("Noes!");
+		}
+	}
+    static Boolean testrevokedLists() {
+    	LinkedList<Integer> list = be.revokedLists();
+    	// Do something with the returned lists to see if it is okay
+    	return true;
+    }
+}

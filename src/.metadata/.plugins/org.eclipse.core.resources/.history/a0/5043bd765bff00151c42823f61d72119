@@ -1,0 +1,9 @@
+package backend;
+
+public class BackendJC {
+	public static void main(String[] arg){
+		Backend be = new Backend();
+		LinkedList list = be.revokedLists();
+	}
+	
+}

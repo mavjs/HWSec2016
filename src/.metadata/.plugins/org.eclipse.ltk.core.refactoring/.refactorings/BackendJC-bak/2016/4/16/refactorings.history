@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;backend.Testing&apos; to &apos;BackendJC&apos;&#x0A;- Original project: &apos;BackendJC&apos;&#x0A;- Original element: &apos;backend.Testing&apos;&#x0A;- Renamed element: &apos;backend.BackendJC&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;Testing&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;backend{Testing.java[Testing" matchStrategy="1" name="BackendJC" qualified="false" references="true" similarDeclarations="false" stamp="1460320269713" textual="false" version="1.0"/>
+</session>

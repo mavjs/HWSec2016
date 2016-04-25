@@ -1,0 +1,36 @@
+package backend;
+
+import java.util.LinkedList;
+
+// Deze klasse gebruiken om unittests mee uit te voeren, controleren of de code werkt
+
+public class BackendJC {
+	Backend be;
+	
+	BackendJC() {
+		be = new Backend();
+		if (!testrevokedLists()) {
+			System.out.println("OMG Noes! revokedLists failed.");
+		}
+		if (!testSomeOtherMethod()) {
+			System.out.println("OMG noes! SomeOtherMethod failed.");
+		}
+	}
+	
+	public static void main(String[] arg){
+		new BackendJC();
+	}
+	
+    Boolean testrevokedLists() {
+    	LinkedList<Integer> list = be.revokedLists();
+    	// Do something with the returned lists to see if it is okay
+    	return true;
+    }
+    
+    Boolean testSomeOtherMethod() {
+    	// SomeRV rv = be.someOtherMethod();
+    	// Do some testing to check if someOtherMethod does the right thing
+    	// return false if it is wrong
+    	return true;
+    }
+}

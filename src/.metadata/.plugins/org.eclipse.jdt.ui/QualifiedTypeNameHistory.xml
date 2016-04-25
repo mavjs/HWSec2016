@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="javax.smartcardio.CommandAPDU"/>
+<fullyQualifiedTypeName name="java.util.LinkedList"/>
+<fullyQualifiedTypeName name="java.security.KeyPairGenerator"/>
+<fullyQualifiedTypeName name="java.security.KeyPair"/>
+<fullyQualifiedTypeName name="java.security.interfaces.RSAPrivateKey"/>
+<fullyQualifiedTypeName name="org.jmrtd.cert.CVCertificateBuilder"/>
+<fullyQualifiedTypeName name="java.security.PrivateKey"/>
+<fullyQualifiedTypeName name="org.jmrtd.cert.CVCAuthorizationTemplate"/>
+<fullyQualifiedTypeName name="org.jmrtd.cert.CVCPrincipal"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="org.jmrtd.cert.CardVerifiableCertificate"/>
+<fullyQualifiedTypeName name="java.io.FileOutputStream"/>
+<fullyQualifiedTypeName name="java.security.Key"/>
+<fullyQualifiedTypeName name="java.io.IOException"/>
+<fullyQualifiedTypeName name="java.security.interfaces.RSAPublicKey"/>
+<fullyQualifiedTypeName name="java.math.BigInteger"/>
+</qualifiedTypeNameHistroy>

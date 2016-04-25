@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Move 0 elements(s) to &apos;scuba&apos;&#x0A;- Destination element: &apos;scuba&apos;&#x0A;- Update references to refactored element" description="Move compilation units" destination="=scuba" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1460889541723" units="0" version="1.0"/>&#x0A;<refactoring comment="Delete resource &apos;scuba&apos;" deleteContents="false" description="Delete resource &apos;scuba&apos;" element1="/scuba" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1460889696686"/>
+</session>

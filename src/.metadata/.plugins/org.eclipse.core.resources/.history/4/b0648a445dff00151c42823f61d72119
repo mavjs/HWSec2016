@@ -1,0 +1,11 @@
+package backend;
+
+import java.util.LinkedList;
+
+public class BackendJC {
+	public static void main(String[] arg){
+		Backend be = new Backend();
+		LinkedList<Integer> list = be.revokedLists();
+	}
+	
+}
