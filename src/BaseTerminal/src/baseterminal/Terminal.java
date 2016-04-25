@@ -1,0 +1,237 @@
+package baseterminal;
+
+import java.nio.ByteBuffer;
+import java.util.List;
+import java.util.Scanner;
+
+import javax.smartcardio.Card;
+import javax.smartcardio.CardChannel;
+import javax.smartcardio.CardException;
+import javax.smartcardio.CardTerminal;
+import javax.smartcardio.CardTerminals;
+import javax.smartcardio.CommandAPDU;
+import javax.smartcardio.ResponseAPDU;
+import javax.smartcardio.TerminalFactory;
+
+public class Terminal implements GlobalVariables {
+
+	protected CommandAPDU SELECT_APPLET = new CommandAPDU(
+			(byte) 0x00, (byte) 0xA4, (byte) 0x04, (byte) 0x00, AID);
+	protected CommandAPDU ISSUE_CARD = new CommandAPDU(CLA_UNENCRYPTED, INS_ISSUE, (byte) 0x00, (byte) 0x00);
+	protected CommandAPDU UNISSUE_CARD = new CommandAPDU(CLA_UNENCRYPTED, INS_UNISSUE, (byte) 0x00, (byte) 0x00);
+	
+	protected Card card = null;
+	protected CardChannel channel = null;
+	protected Scanner scanner = null;
+	
+	
+	/*
+	 * Constructor
+	 */
+	public Terminal() {
+		this.scanner = new Scanner(System.in);
+		this.doConnectToCard();	
+	}
+	
+	
+	/*
+	 * Ask the pincode
+	 */
+	protected byte[] doAskPIN() {
+		System.out.println("Enter PIN(4 char): "); 
+	    short iPIN = 0;
+	    while (iPIN == 0) {
+	    	try {
+	    		iPIN = this.scanner.nextShort();
+		    }
+		    catch(Exception e) {}
+	    }
+	
+	    ByteBuffer buffer = ByteBuffer.allocate(2);
+	    buffer.putShort(iPIN);
+	    return buffer.array();
+	}
+	
+	
+	/*
+	 * Waits until terminal and card is found, connects to the card
+	 * Callback to onChannelCreated
+	 */
+	protected void doConnectToCard() {
+		try {
+			//List terminals
+	    	TerminalFactory tf = TerminalFactory.getDefault();
+	    	CardTerminals ct = tf.terminals();
+	    	List<CardTerminal> cs = ct.list(CardTerminals.State.CARD_PRESENT);
+	    	
+	    	//Wait for terminal with inserted card
+	    	while (cs == null || cs.isEmpty()) {
+	    		try {
+					wait(200);
+				} catch (InterruptedException e) {
+					
+				}
+	    		cs = ct.list(CardTerminals.State.CARD_PRESENT);
+	    		System.out.println("No terminals with a card found.");
+	    	}
+	    	
+	    	//Lookup card
+	    	for(CardTerminal c : cs) {
+	    		
+	    		//When card is found, try to connect and establish base channel
+	    		if (c.isCardPresent()) {
+	    			try {
+	    				this.card = c.connect("*");
+	    				this.channel = null;
+	    				try {
+	    					this.channel = card.getBasicChannel();
+	    				} catch (Exception e) {
+	    					System.out.println("Could not establish a channel with the card");
+	    				}
+	    				//If channel has been established, call onChannelCreated
+	    				if(this.channel != null)
+	    					this.onChannelCreated();
+	    				
+	    			} catch (CardException e) {
+	    				System.out.println("Could not connect to card!");
+	    			}
+	    		} else {
+	    			System.out.println("No card present!");
+	    		}
+	    	}
+    	} catch (CardException e) {
+    		System.out.println("Card status problem!");
+	    }
+	}
+	
+	
+	private ResponseAPDU doDecryptAPDU(ResponseAPDU apdu) {
+		//TODO Do decryption stuff
+		return apdu;
+	}
+	
+	
+	
+	/*
+	 * Disconnects from card 
+	 */
+	protected void doDisconnectCard() {
+		if(this.card == null)  return;
+		try {
+			this.card.disconnect(false);
+		} catch(CardException e) {
+			System.out.println("Card disconnect failed!");
+		}
+	}
+	
+	
+	/*
+	 * Encrypts the APDU
+	 */
+	private CommandAPDU doEncryptAPDU(CommandAPDU apdu) {
+		//TODO Do encryption stuff
+		return apdu;
+	}
+	
+	
+	/*
+	 * Retrieves balance
+	 */
+	protected short doGetBalance() {
+		CommandAPDU apdu = new CommandAPDU(CLA_ENCRYPTED, INS_BALANCE_GET, 0x00, 0x00);
+		ResponseAPDU rapdu = this.doTransmit(apdu);
+		if(rapdu == null || rapdu.getSW() != 0x9000)
+			return -1;
+		return rapdu.getData()[0];	
+	}
+	
+
+	/*
+	 * Terminal sepcific communication
+	 */
+	protected void doSecureCommunication() {
+		//Implement in child classes
+	}
+	
+	
+	/*
+	 * Sends apdu to select applet
+	 */
+	protected boolean doSelectApplet() {
+		ResponseAPDU rapdu = this.doTransmit(SELECT_APPLET);
+		if(rapdu == null || rapdu.getSW() != 0x9000)
+			return false;
+		return true;	
+	}
+	
+	
+	/*
+	 * Transmits APDU
+	 */
+	protected ResponseAPDU doTransmit(CommandAPDU apdu) {
+		if(apdu == null) return null;
+		
+		boolean bEncrypted = apdu.getCLA() == CLA_ENCRYPTED;
+		try {
+			if(bEncrypted)
+				this.doEncryptAPDU(apdu);
+			
+			ResponseAPDU rapdu = this.channel.transmit(apdu);
+			
+			if(bEncrypted)
+				this.doDecryptAPDU(rapdu);
+			
+			return rapdu;
+		}
+		catch (CardException e) {
+			System.out.println("Transmitting APDU failed");
+		}
+		return null;
+		
+	}
+	
+	
+	/*
+	 * Verifies the PINCODE
+	 */
+	protected boolean doVerifyPIN() {	
+		System.out.println("#Verifying PIN ");
+	    byte[] aPin = this.doAskPIN();
+	    CommandAPDU apdu = new CommandAPDU(CLA_ENCRYPTED, INS_PIN_VERIFY, 0x00, 0x00,aPin);
+	    
+	    ResponseAPDU rapdu = this.doTransmit(apdu);
+		if(rapdu != null && rapdu.getSW() == 0x9000) {
+			System.out.println("PIN is correct");
+			return true;
+		}
+		else if(rapdu != null && rapdu.getSW() == 0x6303) {
+			System.out.println("PIN is incorrect");
+		}
+		else {
+			System.out.println("PIN Could not be verfied ");
+			
+		}	
+		return false;	
+	}
+	
+	
+	/*
+	 * Called from doConnectToCard, default implementation for petrol and charging terminal
+	 * Init terminal has own implementation
+	 */
+	protected void onChannelCreated() {
+		//Select applet
+		if(!this.doSelectApplet())
+			return;
+		
+		//TODO set up mutual authentication and shared key
+		
+		//PIN verification
+		if(!this.doVerifyPIN()) {
+			return;
+		}
+	
+		this.doSecureCommunication();
+		this.doDisconnectCard();
+	}
+}
