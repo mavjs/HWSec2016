@@ -3,7 +3,7 @@
     <property name="version" value="1.4.0"/>
     
     <path id="compile.classpath">
-    	<fileset dir="lib" includes="bcprov-jdk15on-149.jar"/>
+    	<fileset dir="lib" includes="bcprov-jdk15on-154.jar"/>
     </path>
 
 	<path id="junit.compile.classpath">
