@@ -11,15 +11,17 @@ public class BackendJC {
 	
 	BackendJC() {
 		be = new Backend();
-		if (!testrevokedLists()) {
-			System.out.println("OMG Noes! revokedLists failed.");
-		}
+	//	if (!testrevokedLists()) {
+	//		System.out.println("OMG Noes! revokedLists failed.");
+	//	}
 		if (!testSomeOtherMethod()) {
 			System.out.println("OMG noes! SomeOtherMethod failed.");
 		}
 		short allowance = getAllowance();
 		System.out.println("Monthly allowance is: " + allowance);
 	//	testKeyCreation();
+	//	be.addToCRL(String 'T', byte 42, Date 2014-15-31, byte 25);
+		
 	}
 	
 	short getAllowance(){
@@ -31,11 +33,11 @@ public class BackendJC {
 		new BackendJC();
 	}
 	
-    Boolean testrevokedLists() {
+  /*  Boolean testrevokedLists() {
     	LinkedList<Integer> list = be.revokedLists();
     	// Do something with the returned lists to see if it is okay
     	return true;
-    }
+    }*/
     
     Boolean testSomeOtherMethod() {
     	// SomeRV rv = be.someOtherMethod();
