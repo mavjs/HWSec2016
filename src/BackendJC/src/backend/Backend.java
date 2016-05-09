@@ -18,36 +18,44 @@ import java.text.SimpleDateFormat;
 import org.jmrtd.cert.*;
 import org.bouncycastle.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.ejbca.cvc.AccessRightEnum;
+import org.ejbca.cvc.AccessRightSignTermEnum;
+import org.ejbca.cvc.AccessRights;
+import org.ejbca.cvc.AuthorizationRole;
+import org.ejbca.cvc.AuthorizationRoleEnum;
+import org.ejbca.cvc.CAReferenceField;
+import org.ejbca.cvc.CVCertificate;
+import org.ejbca.cvc.CVCertificateBody;
+import org.ejbca.cvc.CertificateGenerator;
+//import org.ejbca.cvc.*;
+//import org.ejbca.cvc.CVCAuthorizationTemplate;
+//import org.ejbca.cvc.CardVerifiableCertificate;
+import org.ejbca.cvc.HolderReferenceField;
 
 public class Backend implements PublicKey, PrivateKey{
+	// Number of bits for RSA keypair-generation
+	private static final Integer RSA_BITS = 1984;
+	
 	//Delimiters used in CSV file for CRL
 	private static final String COMMA_DELIMITER = ",";
 	private static final String NEW_LINE_SEPERATOR = "\n";
-	private static final Integer RSA_BITS = 1984;
 	private static final String CRL_FILE = "crl.csv";
-	
 	//CSV file header
 	private static final String FILE_HEADER = "tag,ID,dateRevocation,allowance";
-	
-	// Deze klasse aanroepen van de functies om wat mee te doen
+	BouncyCastleProvider provider;
 
 	public Backend(){
-//		KeyPair keypair_backend = RSAKeyGen();
+		KeyPair keypair_backend = RSAKeyGen();
 		KeyPair keypair_terminal = RSAKeyGen();
-//		CardVerifiableCertificate cert_backend = createCertificate(keypair_backend);
-		CardVerifiableCertificate cert_terminal = createCertificate(keypair_terminal);
+		CVCertificate cert_backend = createCACertificate(keypair_backend);
+		CVCertificate cert_terminal = createTerminalCertificate(keypair_backend, keypair_terminal);
 		addToCRL("T", cert_terminal , new Date(), 4);
-		isOnCRL(cert_terminal);
-	}
-	
-
-	// Setting the monthly allowance that will be distributed to all chargingterminals
-	public short monthlyAllowance(){
-		//Maybe perform a check if a terminal is a valid CT. 
-		short allowance = 50; 	//Max. value is 32767 (inclusive).
-		return allowance;
-	}
-	
+		isOnCRL(keypair_backend, provider, cert_terminal, cert_backend);
+		String certCA =  cert_backend.getAsText();
+		System.out.print(certCA);
+		String certTerm = cert_terminal.getAsText();
+		System.out.print(certTerm);
+	}	
 	/* For every transaction this method is called. 
 	 * Verification will be done if the card and terminal are on the CRL
 	 * 		IF YES: transaction should be stopped and entry should be logged?
@@ -58,14 +66,12 @@ public class Backend implements PublicKey, PrivateKey{
 		try {
 			byte[] signature = cert.getSignature();
 
-			cert.getAuthorityReference();
+	//		cert.getAuthorityReference();
 			return false;
 		} catch (Exception e){
 			System.out.println("Error in validity checking:" + e.getMessage());
 			return false;
 		}
-		
-		
 		
 		// verify if card is on CRL list
 		//verify if Cert is signed by private key.
@@ -83,20 +89,21 @@ public class Backend implements PublicKey, PrivateKey{
 	 * 
 	 * */
 	
-	public static boolean isOnCRL(CardVerifiableCertificate cert){
+	public static boolean isOnCRL(KeyPair key, BouncyCastleProvider provider, CVCertificate cert, CVCertificate cert_ca){
 		BufferedReader buffer = null;
 		StringBuilder sb = new StringBuilder();
 				
 		try {
 			String line;
-			 buffer = new BufferedReader(new FileReader(CRL_FILE));
+			buffer = new BufferedReader(new FileReader(CRL_FILE));
 			byte[] signature = cert.getSignature();
-			byte[] certbody = cert.getCertBodyData();
-			byte[] certenc = cert.getEncoded();
+	//		byte[] certbody = cert.getCertBodyData();
+		//	byte[] certenc = cert.getEncoded();
 			int hash = cert.hashCode();
 			
 			// NEXT STEP IS TO SIGN THE CERTIFICATES CREATED BEFORE I CAN CONTINUE
-			
+	//		cert.verify(key.getPublic());
+			cert.verify(key.getPublic(), provider.getName());
 			
 //			System.out.printf("Signature: %s \n Cert body: %s\n Cert enc %s\n Hash %s\n ", signature, certbody, certenc, hash);
 		//	System.out.printf("Cert body: ", certbody);
@@ -114,20 +121,21 @@ public class Backend implements PublicKey, PrivateKey{
 			return true;
 		} catch (Exception e){
 			System.out.println("Error in adding to CRL:" + e.getMessage());
-		} finally {
+			return false;
+		}
+/*		} finally {
 			try {
-	//			fileReader.close();
 				return false;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				System.out.println("Error in adding to CRL: " + e.getMessage());
 				return false;
 			}		
-		}
+		} */
 		
 	}
 	
-	public static void addToCRL(String tag, CardVerifiableCertificate cert, Date dateRevoke, int allowance ){
+	public static void addToCRL(String tag, CVCertificate cert, Date dateRevoke, int allowance ){
 		FileWriter fileWriter = null;
 				
 		try {
@@ -164,15 +172,24 @@ public class Backend implements PublicKey, PrivateKey{
 	public void removeFromCRL(){
 		
 	}
+
+	/* Keypair of CA is used to create a self-signed certificate for the backend. 
+	 * For the terminals and smartcards use the other certificate creation function.
+	 * 
+	 * */
 	
-	public CardVerifiableCertificate createCertificate(KeyPair keypair) {
+	public CVCertificate createCACertificate(KeyPair keypairCA) {
 		Calendar cal = Calendar.getInstance();
-		PublicKey publicKey = keypair.getPublic();
-		PrivateKey privateKey = keypair.getPrivate();
-		CVCPrincipal caRef = new CVCPrincipal("NLTest00001");
-		String algorithmName = "SHA1withRSA";
-		CVCPrincipal holderRef = new CVCPrincipal("NLWhoareyou00002");
-		CVCAuthorizationTemplate authZTemplate = new CVCAuthorizationTemplate(CVCAuthorizationTemplate.Role.CVCA, CVCAuthorizationTemplate.Permission.READ_ACCESS_DG4);
+		PublicKey publicKeyCA = keypairCA.getPublic();
+		PrivateKey privateKeyCA = keypairCA.getPrivate();
+		CAReferenceField caRef = new CAReferenceField("NL", "PetrolCA", "00001" );
+
+		String algorithmName = "SHA1WITHRSA";
+		HolderReferenceField holderRef = new HolderReferenceField("NL", "PetrolCA","00001");
+		
+		// TODO: figure out difference between rights and roles
+		AuthorizationRoleEnum role = AuthorizationRoleEnum.CVCA;		
+		AccessRights rights = AccessRightEnum.READ_ACCESS_DG3_AND_DG4;
 		
 		BouncyCastleProvider provider = new BouncyCastleProvider();
 		Security.addProvider(provider);
@@ -183,9 +200,53 @@ public class Backend implements PublicKey, PrivateKey{
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //		System.out.println(dateFormat.format(cal.getTime()));
 		
-		try {
-			CardVerifiableCertificate cert = CVCertificateBuilder.createCertificate(publicKey, privateKey, algorithmName, caRef, holderRef, authZTemplate, validFrom, validTo, provider.getName());
-			keypair.
+		try {		
+			CVCertificate cert = CertificateGenerator.createCertificate(
+					publicKeyCA, privateKeyCA, algorithmName, caRef, holderRef, role, rights,
+					validFrom, validTo, provider.getName());
+			
+			return cert;
+		} catch (Exception e){
+			System.out.println("Error in certificate creation: " + e.getMessage());
+			return null;
+		}
+	} 
+	
+	// TODO: make function to serienumber uit te geven en functie om op te vragen wat de volgende is.
+	// terminalID is bijv: CT of PT en dan het ID number ervan
+	// Serialnumber is serienumber van certificate used for revocation
+	public CVCertificate createTerminalCertificate(KeyPair keypairCA, KeyPair keypairTerm, String terminalID) {
+		Calendar cal = Calendar.getInstance();
+
+		// private key CA for signing certificate
+		PrivateKey privateKeyCA = keypairCA.getPrivate();
+		
+		// public key Terminal for in certificate
+		PublicKey publicKeyTerm = keypairTerm.getPublic();
+		
+		CAReferenceField caRef = new CAReferenceField("NL", "PetrolCA", "00001" );
+
+		String algorithmName = "SHA1WITHRSA";
+		HolderReferenceField holderRef = new HolderReferenceField("NL", "TerminalID", serialnumber);
+		
+		// TODO: figure out different roles and rights DV_F = Foreign, DV_D = Domestic
+		AuthorizationRoleEnum role = AuthorizationRoleEnum.IS;
+		AccessRights rights = AccessRightEnum.READ_ACCESS_DG3;
+		
+		BouncyCastleProvider provider = new BouncyCastleProvider();
+		Security.addProvider(provider);
+
+		Date validFrom = new Date();
+		cal.set(Calendar.YEAR, cal.get(Calendar.YEAR)+1); //Certificates will blow up on Feb 29th. :)
+		Date validTo = cal.getTime();
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		System.out.println(dateFormat.format(cal.getTime()));
+		
+		try {		
+			CVCertificate cert = CertificateGenerator.createCertificate(
+					publicKeyTerm, privateKeyCA, algorithmName, caRef, holderRef, role, rights,
+					validFrom, validTo, provider.getName());
+			
 			return cert;
 		} catch (Exception e){
 			System.out.println("Error in certificate creation: " + e.getMessage());
@@ -193,19 +254,12 @@ public class Backend implements PublicKey, PrivateKey{
 		}
 	} 
 
-
 	@Override
 	public String getAlgorithm() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-
-	@Override
-	public byte[] getEncoded() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
 	@Override
@@ -218,11 +272,12 @@ public class Backend implements PublicKey, PrivateKey{
 	public KeyPair RSAKeyGen() {
 		try {
 			System.out.println("Generating RSA keys, please wait...");
-			KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-			generator.initialize(RSA_BITS);		
-			KeyPair keypair = generator.generateKeyPair();
+			final KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+			keyGen.initialize(RSA_BITS, new SecureRandom());
+			final KeyPair keyPair = keyGen.generateKeyPair();
+	//		KeyPair keypair = keyGen.generateKeyPair();
 		
-			return keypair;				
+			return keyPair;				
 		} catch (Exception e) {
 			System.out.println("Error in RSA key generation:" + e.getMessage());
 			return null;
@@ -231,7 +286,20 @@ public class Backend implements PublicKey, PrivateKey{
 	
 	public static void writeKey(Key key, String filename) throws IOException {
 		FileOutputStream file = new FileOutputStream(filename);
-		file.write(key.getEncoded());
+	//	file.write(key);
 		file.close();
+	}
+	
+	// Setting the monthly allowance that will be distributed to all chargingterminals
+	public short monthlyAllowance(){
+		//Maybe perform a check if a terminal is a valid CT. 
+		short allowance = 50; 	//Max. value is 32767 (inclusive).
+		return allowance;
+	}
+
+	@Override
+	public byte[] getEncoded() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
