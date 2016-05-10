@@ -242,11 +242,10 @@ public class Backend implements PublicKey, PrivateKey{
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //		System.out.println(dateFormat.format(cal.getTime()));
 		
-		try {		
+		try {
 			CVCertificate cert = CertificateGenerator.createCertificate(
 					publicKeyTerm, privateKeyCA, algorithmName, caRef, holderRef, role, rights,
 					validFrom, validTo, provider.getName());
-			
 			return cert;
 		} catch (Exception e){
 			System.out.println("Error in certificate creation: " + e.getMessage());
