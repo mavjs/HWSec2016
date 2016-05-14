@@ -9,7 +9,7 @@ import java.util.LinkedList;
 public class BackendJC {
 	Backend be;
 	
-	BackendJC() {
+	BackendJC() throws Exception {
 		be = new Backend();
 	//	if (!testrevokedLists()) {
 	//		System.out.println("OMG Noes! revokedLists failed.");
@@ -29,7 +29,7 @@ public class BackendJC {
 		return allowance;
 	}
 	
-	public static void main(String[] arg){
+	public static void main(String[] arg) throws Exception{
 		new BackendJC();
 	}
 	
