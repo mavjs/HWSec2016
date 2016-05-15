@@ -120,7 +120,7 @@ public class Backend implements PublicKey, PrivateKey, GlobVarBE{
 			 while((line = buffer.readLine()) != null) {
 				 System.out.println("line starts here:");
 				 System.out.println( line);
-				 if(line.indexOf('20230E5C1F76CE19') != -1) {
+				 if(line.indexOf("20230E5C1F76CE19") != -1) {
 					 found = true;			 
 					 break;
 				 }
