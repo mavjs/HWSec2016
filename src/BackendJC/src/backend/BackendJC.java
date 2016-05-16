@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 // Deze klasse gebruiken om unittests mee uit te voeren, controleren of de code werkt
 
+@SuppressWarnings("unused")
 public class BackendJC {
 	Backend be;
 	

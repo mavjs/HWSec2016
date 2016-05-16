@@ -21,6 +21,7 @@ import org.ejbca.cvc.CVCertificate;
 import org.ejbca.cvc.CertificateGenerator;
 import org.ejbca.cvc.HolderReferenceField;
 
+@SuppressWarnings("unused")
 enum CertType{
 	CA, TERMINAL, CARD;
 }
@@ -47,6 +48,7 @@ public class CertificateCreator implements GlobVarBE{
 		String serialNrCA = "";
 		String serialNrTerm = "";
 		String serialNrCard = "";
+		@SuppressWarnings("unused")
 		String ID = "";
 		String type = "";
 		
@@ -99,8 +101,7 @@ public class CertificateCreator implements GlobVarBE{
 			ID = createRandomString(9);
 			break;
 		}
-		
-		FileWriter fileWriter = null;
+
 		Calendar cal = Calendar.getInstance();
 
 		String algorithmName = "SHA1WITHRSA";
@@ -110,26 +111,16 @@ public class CertificateCreator implements GlobVarBE{
 		Date validFrom = new Date();
 		cal.set(Calendar.YEAR, cal.get(Calendar.YEAR)+1); //Certificates will blow up on Feb 29th. :)
 		Date validTo = cal.getTime();
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
-		try {		
-			CVCertificate cert = CertificateGenerator.createCertificate(
-					publicKey, privateKey, algorithmName, caRef, holderRef, role, rights,
-					validFrom, validTo, provider.getName());
-			String body = cert.getAsText();
-			fileWriter = new FileWriter(CA_CERT, true);
-			fileWriter.append("-----BEGIN-CERTIFICATE----------------\n");
-			fileWriter.append(type);
-			fileWriter.append(NEW_LINE_SEPERATOR.toString());
-			fileWriter.append(String.valueOf(body));
-			fileWriter.append("\n-----END-CERTIFICATE------------------\n");
-			return cert;
-		} catch (Exception e){
-			System.out.println("Error in certificate creation: " + e.getMessage());
-			return null;
-		} finally {
-			fileWriter.flush();
-			fileWriter.close();
-		}
+		//DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+		CVCertificate cert = CertificateGenerator.createCertificate(
+				publicKey, privateKey, algorithmName, caRef, holderRef, role, rights,
+				validFrom, validTo, provider.getName());
+		String body = cert.getAsText();
+		
+		Storage storage = new Storage(type, String.valueOf(body));
+		storage.CACertWriter();
+			
+		return cert;
 	}
 }

@@ -33,6 +33,7 @@ import org.ejbca.cvc.CertificateGenerator;
 //import org.ejbca.cvc.CardVerifiableCertificate;
 import org.ejbca.cvc.HolderReferenceField;
 
+@SuppressWarnings({ "unused", "serial" })
 public class Backend implements PublicKey, PrivateKey, GlobVarBE{
 	CertificateCreator certificateCreator; 
 	BouncyCastleProvider provider;
@@ -130,48 +131,16 @@ public class Backend implements PublicKey, PrivateKey, GlobVarBE{
 			System.out.println("Error for CRL:" + e.getClass() + e.getMessage());
 			return false;
 		}
-/*		} finally {
-			try {
-				return false;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				System.out.println("Error in adding to CRL: " + e.getMessage());
-				return false;
-			}		
-		} */
 		
 	}
 	
-	public static void addToCRL(String tag, CVCertificate cert, Date dateRevoke, int allowance ) throws NoSuchFieldException{
+	public static void addToCRL(String tag, CVCertificate cert, Date dateRevoke, int allowance ) throws Exception, NoSuchFieldException{
 		FileWriter fileWriter = null;
 		byte[] signature = cert.getSignature();
 		String hash = bytesToHex(signature);
 		
-		try {
-			fileWriter = new FileWriter(CRL_FILE,true);
-			
-			fileWriter.append(FILE_HEADER.toString());
-			fileWriter.append(NEW_LINE_SEPERATOR.toString());			
-			fileWriter.append(String.valueOf(tag));
-			fileWriter.append(COMMA_DELIMITER);
-			fileWriter.append(String.valueOf(hash));
-			fileWriter.append(COMMA_DELIMITER);
-			fileWriter.append(String.valueOf(dateRevoke));
-			fileWriter.append(COMMA_DELIMITER);
-			fileWriter.append(String.valueOf(allowance));
-			fileWriter.append(NEW_LINE_SEPERATOR);		
-			System.out.println("Sweet, CSV succesful");		
-		} catch (Exception e){
-			System.out.println("Error in adding to CRL:" + e.getMessage());
-		} finally {
-			try {
-				fileWriter.flush();
-				fileWriter.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				System.out.println("Error in adding to CRL: " + e.getMessage());
-			}		
-		}
+		Storage storage = new Storage(String.valueOf(tag), String.valueOf(hash), String.valueOf(dateRevoke), String.valueOf(allowance));
+		storage.CRLWriter();
 	}
 	
 	
