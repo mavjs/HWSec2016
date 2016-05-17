@@ -70,6 +70,7 @@ public class Storage implements GlobVarBE {
 			} else {
 				csvwriter = new CSVWriter(new FileWriter(file, true), CSVWriter.DEFAULT_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER);
 				csvwriter.writeNext(CRL_HEADER);
+				csvwriter.writeNext(this.CRLmakeString());
 			}
 		} catch (IOException ioe) {
 			System.out.println("IOException: " + ioe.getMessage());
