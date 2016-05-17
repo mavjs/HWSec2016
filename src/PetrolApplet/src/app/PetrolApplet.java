@@ -19,7 +19,7 @@ import javacard.framework.*;
  *   Le (1 byte): Maximum of bytes expected in the data field of the response to the command 
  */
 
-public class CardApplet extends javacard.framework.Applet implements ISO7816 {
+public class PetrolApplet extends javacard.framework.Applet implements ISO7816 {
     // Classes go here
     /** For encrypted instructions and responses */
     static final byte CLA_PROTECTED_APDU = 0x0c;
@@ -98,14 +98,14 @@ public class CardApplet extends javacard.framework.Applet implements ISO7816 {
 
     public static void install(byte[] bArray, short bOffset, byte bLength) {
         // GP-compliant JavaCard applet registration
-        new app.CardApplet().register(bArray, (short) (bOffset + 1),
+        new PetrolApplet().register(bArray, (short) (bOffset + 1),
                 bArray[bOffset]);
     }
     
     /** Constructor at applet-install-time; creates the key-structure and sets the state to STATE_INIT
      * this is the only time we can create new data structures, so make it count.
      */
-    public CardApplet() {
+    public PetrolApplet() {
         /** Transient array in RAM to use for 'things' (what? Maybe first byte: isAtThisStepOfMutualAuthProtocol */
         tmp = JCSystem.makeTransientByteArray((short)256,JCSystem.CLEAR_ON_RESET);
         /** Card will establish a session key, store here */
