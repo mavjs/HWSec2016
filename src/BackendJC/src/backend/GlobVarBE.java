@@ -14,5 +14,10 @@ public interface GlobVarBE {
 	public static final String CAFooter = "--------END-CERTIFICATE--------";
 	public static final String CA_privkey = "ca_priv.key";
 	public static final String CA_pubkey = "ca_pub.key";
+	public static enum CertType{
+		CA, TERMINAL, CARD;
+	}
+	
+	public static final String ALGORITHMNAME = "SHA1WITHRSA";
 	
 }
