@@ -22,11 +22,7 @@ import org.ejbca.cvc.CertificateGenerator;
 import org.ejbca.cvc.HolderReferenceField;
 
 @SuppressWarnings("unused")
-enum CertType{
-	CA, TERMINAL, CARD;
-}
-
-public class CertificateCreator implements GlobVarBE{
+public class CertificateCreator implements GlobVarBE {
 	final protected static char[] serialArray = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
 	public CertificateCreator()throws Exception{
@@ -48,7 +44,6 @@ public class CertificateCreator implements GlobVarBE{
 		String serialNrCA = "";
 		String serialNrTerm = "";
 		String serialNrCard = "";
-		@SuppressWarnings("unused")
 		String ID = "";
 		String type = "";
 		
@@ -71,9 +66,8 @@ public class CertificateCreator implements GlobVarBE{
 			type = "Type: CA Certificate";
 			// private key CA for signing certificate
 			privateKey = keypairCA.getPrivate();
-			// public key Terminal for in certificate
+			// public key Terminal for certificate
 			publicKey = keypairCA.getPublic();
-			//return caRef, holderRef;
 			break;
 		case TERMINAL:
 			serialNrTerm = createRandomString(5);
@@ -116,10 +110,6 @@ public class CertificateCreator implements GlobVarBE{
 		CVCertificate cert = CertificateGenerator.createCertificate(
 				publicKey, privateKey, algorithmName, caRef, holderRef, role, rights,
 				validFrom, validTo, provider.getName());
-		String body = cert.getAsText();
-		
-		Storage storage = new Storage(type, String.valueOf(body));
-		storage.CACertWriter();
 			
 		return cert;
 	}

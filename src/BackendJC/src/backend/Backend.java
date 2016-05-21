@@ -33,32 +33,17 @@ import org.ejbca.cvc.CertificateGenerator;
 //import org.ejbca.cvc.CardVerifiableCertificate;
 import org.ejbca.cvc.HolderReferenceField;
 
-@SuppressWarnings({ "unused", "serial" })
-public class Backend implements PublicKey, PrivateKey, GlobVarBE{
-	CertificateCreator certificateCreator; 
-	BouncyCastleProvider provider;
+@SuppressWarnings("unused")
+public class Backend implements GlobVarBE {
+
 	final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
 	//TODO: List of revoked certificates
 	//TODO: List of IDs associated with each terminal and card  --> Request from personalisation terminal? 
 	//TODO: List of revoked petrol cards
-	
-	public Backend() throws Exception {
-		certificateCreator = new CertificateCreator();
-		KeyPair keypair_backend = RSAKeyGen();
-		KeyPair keypair_terminal = RSAKeyGen();
-		
-		CVCertificate cert_backend = certificateCreator.createCertificate(CertType.CA, keypair_backend, keypair_terminal);
-		CVCertificate cert_terminal = certificateCreator.createCertificate(CertType.TERMINAL, keypair_backend, keypair_terminal);
-		addToCRL("T", cert_terminal , new Date(), 4);
-		addToCRL("C", cert_terminal , new Date(), 20);
 
-		isOnCRL(keypair_terminal,provider,cert_terminal,cert_backend);
-		String certCA =  cert_backend.getAsText();
-//		System.out.print(certCA);
-//		String certTerm = cert_terminal.getAsText();
-//		System.out.print(certTerm);
-	}	
-	
+	public Backend() {
+		
+	}
 	
 	/* For every transaction this method is called. 
 	 * Verification will be done if the card and terminal are on the CRL
@@ -94,18 +79,19 @@ public class Backend implements PublicKey, PrivateKey, GlobVarBE{
 	    return new String(hexChars);
 	}
 	
-	/* CRL consists of: 
-	Tag (C or T), C = Card T = Terminal
-	id = ID number of card or terminal
-	date-time of revocation, so current date
-	allowance before revocation 
-	Certificate hash
-	
-	*/
-	
-	// tagKey is 
-	public static boolean isOnCRL(KeyPair tagKey, BouncyCastleProvider provider, CVCertificate cert, CVCertificate cert_ca) throws NoSuchFieldException{
-	//	StringBuilder sb = new StringBuilder();
+	/* isOnCRL checks whether a certain certificate is on the Certificate Revocation List
+	 * 
+	 * CRL consists of:
+	 * Tag (C or T), C = Card T = Terminal
+	 * id = ID number of card or terminal
+	 * date-time of revocation, so current date
+	 * allowance before revocation
+	 * Certificate hash
+	 * 
+	 * @param tagkey, provider, cert, cert_ca
+	 * @return
+	 */
+	public boolean isOnCRL(KeyPair tagKey, BouncyCastleProvider provider, CVCertificate cert, CVCertificate cert_ca) throws NoSuchFieldException{
 		String holderRef = cert.getCertificateBody().getHolderReference().getConcatenated();
 		Date validFrom = cert.getCertificateBody().getValidFrom();
 		Date validTo = cert.getCertificateBody().getValidTo();
@@ -134,13 +120,12 @@ public class Backend implements PublicKey, PrivateKey, GlobVarBE{
 		
 	}
 	
-	public static void addToCRL(String tag, CVCertificate cert, Date dateRevoke, int allowance ) throws Exception, NoSuchFieldException{
+	public void addToCRL(String tag, CVCertificate cert, Date dateRevoke, int allowance ) throws Exception, NoSuchFieldException{
 		FileWriter fileWriter = null;
 		byte[] signature = cert.getSignature();
 		String hash = bytesToHex(signature);
 		
-		Storage storage = new Storage(String.valueOf(tag), String.valueOf(hash), String.valueOf(dateRevoke), String.valueOf(allowance));
-		storage.CRLWriter();
+		StorageOld.CRLWriter(String.valueOf(tag), String.valueOf(hash), String.valueOf(dateRevoke), String.valueOf(allowance));
 	}
 	
 	
@@ -148,19 +133,6 @@ public class Backend implements PublicKey, PrivateKey, GlobVarBE{
 		
 	}
 
-	@Override
-	public String getAlgorithm() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-
-	@Override
-	public String getFormat() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	// 1024 bits is not sufficient, but enough for testing phase
 	public KeyPair RSAKeyGen() {
@@ -182,16 +154,27 @@ public class Backend implements PublicKey, PrivateKey, GlobVarBE{
 		file.close();
 	}
 	
-	// Setting the monthly allowance that will be distributed to all chargingterminals
+	// Setting the monthly allowance that will be distributed to all charging terminals
 	public short monthlyAllowance(){
 		//Maybe perform a check if a terminal is a valid CT. 
 		short allowance = 50; 	//Max. value is 32767 (inclusive).
 		return allowance;
 	}
+	
+	public static void main(final String args[]) throws Exception {
+		CertificateCreator certificateCreator = new CertificateCreator();
+		BouncyCastleProvider provider = new BouncyCastleProvider();
+		Backend BE = new Backend();
+		KeyPair keypair_backend = BE.RSAKeyGen();
+		KeyPair keypair_terminal = BE.RSAKeyGen();
+		
+		CVCertificate cert_backend = certificateCreator.createCertificate(CertType.CA, keypair_backend, keypair_terminal);
+		CVCertificate cert_terminal = certificateCreator.createCertificate(CertType.TERMINAL, keypair_backend, keypair_terminal);
+		BE.addToCRL("T", cert_terminal , new Date(), 4);
+		BE.addToCRL("C", cert_terminal , new Date(), 20);
 
-	@Override
-	public byte[] getEncoded() {
-		// TODO Auto-generated method stub
-		return null;
+		BE.isOnCRL(keypair_terminal,provider,cert_terminal,cert_backend);
+		String certCA =  cert_backend.getAsText();
+		System.out.println(certCA);
 	}
 }
