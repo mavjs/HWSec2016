@@ -1,180 +1,98 @@
 package backend;
 
-import java.io.*;
-import java.security.*;
-import java.security.cert.CertificateException;
-import java.security.interfaces.*;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Scanner;
-import java.io.FileWriter;
-import java.io.FileReader;
 import java.io.BufferedReader;
-import java.io.IOException;
-//import java.util.LinkedList;
-import java.math.BigInteger;
-import java.security.spec.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import org.jmrtd.cert.*;
-import org.bouncycastle.*;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.security.KeyPair;
+
+// bouncycastle security provider 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.ejbca.cvc.AccessRightEnum;
-import org.ejbca.cvc.AccessRightSignTermEnum;
-import org.ejbca.cvc.AccessRights;
-import org.ejbca.cvc.AuthorizationRole;
-import org.ejbca.cvc.AuthorizationRoleEnum;
-import org.ejbca.cvc.CAReferenceField;
+
+// ejbca CVC imports
 import org.ejbca.cvc.CVCertificate;
-import org.ejbca.cvc.CVCertificateBody;
-import org.ejbca.cvc.CertificateGenerator;
-//import org.ejbca.cvc.*;
-//import org.ejbca.cvc.CVCAuthorizationTemplate;
-//import org.ejbca.cvc.CardVerifiableCertificate;
-import org.ejbca.cvc.HolderReferenceField;
+import org.ejbca.cvc.CertificateParser;
 
-@SuppressWarnings("unused")
 public class Backend implements GlobVarBE {
-
-	final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-	//TODO: List of revoked certificates
-	//TODO: List of IDs associated with each terminal and card  --> Request from personalisation terminal? 
-	//TODO: List of revoked petrol cards
 
 	public Backend() {
 		
 	}
 	
-	/* For every transaction this method is called. 
-	 * Verification will be done if the card and terminal are on the CRL
-	 * 		IF YES: transaction should be stopped and entry should be logged?
-	 * 		IF NOT: continue transaction
-	 */
-	
-
-	public static boolean isCertificateValid(String tag, int serialNr, int allowance, CardVerifiableCertificate cert){
-		try {
-			Date dateRevoke;
-			byte[] signature = cert.getSignature();
-
-	//		cert.getAuthorityReference();
-			return false;
-		} catch (Exception e){
-			System.out.println("Error in validity checking:" + e.getMessage());
-			return false;
-		}
-		
-		// verify if card is on CRL list
-		//verify if Cert is signed by private key.
-		// verify if date of certificate is still valid
-	}
-	/* Purpose is to convert signature to a full length string, otherwise you get garbage. */
-	public static String bytesToHex(byte[] bytes) {
-	    char[] hexChars = new char[bytes.length * 2];
-	    for ( int j = 0; j < bytes.length; j++ ) {
-	        int v = bytes[j] & 0xFF;
-	        hexChars[j * 2] = hexArray[v >>> 4];
-	        hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-	    }
-	    return new String(hexChars);
-	}
-	
-	/* isOnCRL checks whether a certain certificate is on the Certificate Revocation List
-	 * 
-	 * CRL consists of:
-	 * Tag (C or T), C = Card T = Terminal
-	 * id = ID number of card or terminal
-	 * date-time of revocation, so current date
-	 * allowance before revocation
-	 * Certificate hash
-	 * 
-	 * @param tagkey, provider, cert, cert_ca
-	 * @return
-	 */
-	public boolean isOnCRL(KeyPair tagKey, BouncyCastleProvider provider, CVCertificate cert, CVCertificate cert_ca) throws NoSuchFieldException{
-		String holderRef = cert.getCertificateBody().getHolderReference().getConcatenated();
-		Date validFrom = cert.getCertificateBody().getValidFrom();
-		Date validTo = cert.getCertificateBody().getValidTo();
-		
-		byte[] signature = cert.getSignature();
-		String hash = bytesToHex(signature);
-		
-		try {
-			String line;
-			BufferedReader buffer = new BufferedReader(new FileReader(CRL_FILE));
-			Boolean found = false;
-				
-			 while((line = buffer.readLine()) != null) {
-				 System.out.println("line starts here:");
-				 System.out.println( line);
-				 if(line.indexOf("20230E5C1F76CE19") != -1) {
-					 found = true;			 
-					 break;
-				 }
-			 }
-			return found;
-		} catch (Exception e){
-			System.out.println("Error for CRL:" + e.getClass() + e.getMessage());
-			return false;
-		}
-		
-	}
-	
-	public void addToCRL(String tag, CVCertificate cert, Date dateRevoke, int allowance ) throws Exception, NoSuchFieldException{
-		FileWriter fileWriter = null;
-		byte[] signature = cert.getSignature();
-		String hash = bytesToHex(signature);
-		
-		StorageOld.CRLWriter(String.valueOf(tag), String.valueOf(hash), String.valueOf(dateRevoke), String.valueOf(allowance));
-	}
-	
-	
-	public void removeFromCRL(){
-		
-	}
-
-
-	// 1024 bits is not sufficient, but enough for testing phase
-	public KeyPair RSAKeyGen() {
-		try {
-			System.out.println("Generating RSA keys, please wait...");
-			final KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-			keyGen.initialize(RSA_BITS, new SecureRandom());
-			final KeyPair keyPair = keyGen.generateKeyPair();		
-			return keyPair;				
-		} catch (Exception e) {
-			System.out.println("Error in RSA key generation:" + e.getMessage());
-			return null;
-		}	
-	}
-	
-	public static void writeKey(Key key, String filename) throws IOException {
-		FileOutputStream file = new FileOutputStream(filename);
-	//	file.write(key);
-		file.close();
-	}
-	
-	// Setting the monthly allowance that will be distributed to all charging terminals
-	public short monthlyAllowance(){
-		//Maybe perform a check if a terminal is a valid CT. 
-		short allowance = 50; 	//Max. value is 32767 (inclusive).
-		return allowance;
-	}
-	
 	public static void main(final String args[]) throws Exception {
-		CertificateCreator certificateCreator = new CertificateCreator();
-		BouncyCastleProvider provider = new BouncyCastleProvider();
-		Backend BE = new Backend();
-		KeyPair keypair_backend = BE.RSAKeyGen();
-		KeyPair keypair_terminal = BE.RSAKeyGen();
+		CertCreate CCreate = new CertCreate();
+		File CAPubKey = new File(CA_pubkey);
+		File CAPrivKey = new File(CA_privkey);
+		File CACertFile = new File(CA_CERT);
+		BufferedReader scanInput = new BufferedReader(new InputStreamReader(System.in));
+		final KeyPair keypair_backend;
+		KeyPair keypair_misc;
+		CertType type = null;
+		String priv_key, pub_key, misc_cert;
 		
-		CVCertificate cert_backend = certificateCreator.createCertificate(CertType.CA, keypair_backend, keypair_terminal);
-		CVCertificate cert_terminal = certificateCreator.createCertificate(CertType.TERMINAL, keypair_backend, keypair_terminal);
-		BE.addToCRL("T", cert_terminal , new Date(), 4);
-		BE.addToCRL("C", cert_terminal , new Date(), 20);
+		if (! (CAPubKey.exists() && CAPrivKey.exists() && CACertFile.exists())) {
+			keypair_backend = CCreate.RSAKeyGen();
+			final CVCertificate cert_backend = CCreate.CreateCACert(keypair_backend);
+			String certData_CA = cert_backend.getAsText("", true);
+			System.out.println("Certificate Data.....");
+			System.out.println(certData_CA);
+			System.out.println("Writing keypair to files.....");
+			Storage.WriteCAKeyPair(keypair_backend);
+			System.out.println("Writing CA Certificate to files.....");
+			Storage.WriteCAFile(CACertFile, cert_backend.getDEREncoded());
+		}
+		else {
+			System.out.println("Loading CA Certificate File.....");
+			byte[] certData = Storage.LoadCAFile(CACertFile);
+			CVCertificate cert_backend = CertificateParser.parseCertificate(certData);
+			keypair_backend = Storage.LoadCAKeyPair();
+			System.out.println("Checking if loaded CA Certificate is signed by the CA KeyPair (PublicKey)......");
+			cert_backend.verify(keypair_backend.getPublic(), new BouncyCastleProvider().getName());
+		}
+		while (true) {
+				System.out.println("What certificate would you like to create?");
+				System.out.println("1) Terminal, 2) Card, 3) Quit");
+				System.out.print("-->");
+				int cert_type = Integer.parseInt(scanInput.readLine());
+				if(cert_type == 1) {
+					type = CertType.TERMINAL;
 
-		BE.isOnCRL(keypair_terminal,provider,cert_terminal,cert_backend);
-		String certCA =  cert_backend.getAsText();
-		System.out.println(certCA);
+				} else if (cert_type == 2) {
+					type = CertType.CARD;
+				} else if (cert_type == 3) {
+					System.out.println("Exiting and program shutting down now.....");
+					System.out.flush();
+					System.exit(0);
+				}
+				System.out.println("Where would you like to store the keypair for the terminal?");
+				System.out.println("Type in the full path!");
+				System.out.print("-->");
+				String path = scanInput.readLine();
+				String filename = CCreate.createRandomString(10);
+				if(path.endsWith("/")) {
+					priv_key = String.format("%s%s_priv.key", path, filename);
+					pub_key = String.format("%s%s_pub.key", path, filename);
+					misc_cert = String.format("%s%s.crt", path, filename);
+				} else {
+					priv_key = String.format("%s/%s_priv.key", path, filename);
+					pub_key = String.format("%s/%s_pub.key", path, filename);
+					misc_cert = String.format("%s/%s.crt", path, filename);
+				}
+				System.out.println("Your keypairs are stored in: ");
+				System.out.printf("Private Key: %s", priv_key);
+				System.out.println();
+				System.out.printf("Public Key: %s", pub_key);
+				System.out.println();
+				keypair_misc = CCreate.RSAKeyGen();
+				System.out.println("Writing the keypair to files.....");
+				Storage.WriteKeyPair(new File(priv_key), new File(pub_key), keypair_misc);
+				System.out.println("Creating your certificate for the terminal.....");
+				CVCertificate cert_misc = CCreate.CreateMiscCert(type, keypair_backend.getPrivate(), keypair_misc.getPublic());
+				System.out.println("The certificate is stored in: ");
+				System.out.printf("Certificate: %s", misc_cert);
+				System.out.println();
+				System.out.println("Writing certificate data.....");
+				Storage.WriteCAFile(new File(misc_cert), cert_misc.getDEREncoded());
+				System.out.flush();
+		}
 	}
 }
