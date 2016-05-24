@@ -8,10 +8,10 @@ import java.util.LinkedList;
 
 @SuppressWarnings("unused")
 public class BackendJC {
-	Backend be;
+	BackendOld be;
 	
 	BackendJC() throws Exception {
-		be = new Backend();
+		be = new BackendOld();
 	//	if (!testrevokedLists()) {
 	//		System.out.println("OMG Noes! revokedLists failed.");
 	//	}
