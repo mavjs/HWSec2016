@@ -21,8 +21,9 @@ public class Storage implements GlobVarBE {
 
 	public Storage() {
 	}
+
 	
-	public static void WriteKeyPair(KeyPair keypair) throws IOException {
+	public static void WriteKeyPair(File privfile, File pubfile, KeyPair keypair) throws IOException {
 		FileOutputStream fos = null;
 		PrivateKey privatekey = keypair.getPrivate();
 		PublicKey publickey = keypair.getPublic();
@@ -30,7 +31,7 @@ public class Storage implements GlobVarBE {
 		// Store Public Key
 		X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(publickey.getEncoded());
 		try {
-			fos = new FileOutputStream(CA_pubkey);
+			fos = new FileOutputStream(pubfile);
 			fos.write(x509EncodedKeySpec.getEncoded());
 		} finally {
 			fos.close();
@@ -39,21 +40,25 @@ public class Storage implements GlobVarBE {
 		// Store Private Key.
 		PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privatekey.getEncoded());
 		try {
-			fos = new FileOutputStream(CA_privkey);
+			fos = new FileOutputStream(privfile);
 			fos.write(pkcs8EncodedKeySpec.getEncoded());
 		} finally {
 			fos.close();
 		}
 	}
 	
-	public static KeyPair LoadKeyPair() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+	public static void WriteCAKeyPair(KeyPair keypair) throws IOException {
+		WriteKeyPair(new File(CA_privkey), new File(CA_pubkey), keypair);
+	}
+	
+	public static KeyPair LoadKeyPair(String privkey, String pubkey) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 		FileInputStream fis = null;
 		byte[] encodedPublicKey, encodedPrivateKey;
 
 		try {
 			// Read Public Key.
-			File filePublicKey = new File(CA_pubkey);
-			fis = new FileInputStream(CA_pubkey);
+			File filePublicKey = new File(pubkey);
+			fis = new FileInputStream(pubkey);
 			encodedPublicKey = new byte[(int) filePublicKey.length()];
 			fis.read(encodedPublicKey);
 		} finally {
@@ -64,8 +69,8 @@ public class Storage implements GlobVarBE {
 	 
 		try {
 			// Read Private Key.
-			File filePrivateKey = new File(CA_privkey);
-			fis = new FileInputStream(CA_privkey);
+			File filePrivateKey = new File(privkey);
+			fis = new FileInputStream(privkey);
 			encodedPrivateKey = new byte[(int) filePrivateKey.length()];
 			fis.read(encodedPrivateKey);
 		} finally {
@@ -81,6 +86,10 @@ public class Storage implements GlobVarBE {
 		PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
 	 
 		return new KeyPair(publicKey, privateKey);
+	}
+	
+	public static KeyPair LoadCAKeyPair() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+		return LoadKeyPair(CA_privkey, CA_pubkey);
 	}
 	
 	public static void WriteCAFile(final File certfile, final byte[] cert) throws IOException {
