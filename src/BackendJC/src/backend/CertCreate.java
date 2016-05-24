@@ -115,7 +115,8 @@ public class CertCreate implements GlobVarBE {
 		String serialNrTerm, serialNrCard;
 		
 		switch(certType) {
-		case TERMINAL:
+		case TERMINAL: 
+		default:
 			serialNrTerm = createRandomString(5);
 			caRef = new CAReferenceField("NL", "PetrolCA", serialNrTerm);
 			holderRef = new HolderReferenceField("NL", "PCATerm", serialNrTerm);  //PCA = Petrol CA
@@ -126,8 +127,8 @@ public class CertCreate implements GlobVarBE {
 			// public key Terminal for in certificate
 			publicKey = PublicKeyMisc;
 			break;
-		case CARD: 
-		default: 		// In case the role or rights have not been specified, this will be default setting. 
+		case CARD: 		
+			// In case the role or rights have not been specified, this will be default setting. 
 			serialNrCard = createRandomString(5);
 			caRef = new CAReferenceField("NL", "PetrolCA", serialNrCard);
 			holderRef = new HolderReferenceField("NL", "PCACard", serialNrCard);
