@@ -1,9 +1,14 @@
 package baseterminal;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardChannel;
 import javax.smartcardio.CardException;
@@ -67,8 +72,8 @@ public class Terminal implements GlobalVariables {
 	    	//Wait for terminal with inserted card
 	    	while (cs == null || cs.isEmpty()) {
 	    		try {
-					wait(200);
-				} catch (InterruptedException e) {
+					Thread.sleep(1000);
+				} catch (Exception e) {
 					
 				}
 	    		cs = ct.list(CardTerminals.State.CARD_PRESENT);
@@ -107,7 +112,28 @@ public class Terminal implements GlobalVariables {
 	
 	private ResponseAPDU doDecryptAPDU(ResponseAPDU apdu) {
 		//TODO Do decryption stuff
-		return apdu;
+		System.out.println("Start decryption for Response with SW:" + Integer.toHexString(apdu.getSW()));
+		byte[] plainText = {};
+		try {
+	    	final byte[] keyBytes = {(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00}/*Arrays.copyOf(digestOfPassword, 24)*/;
+	
+	    	final SecretKey key = new SecretKeySpec(keyBytes, "DESede");
+	    	final IvParameterSpec iv = new IvParameterSpec(new byte[8]);
+	    	final Cipher decipher = Cipher.getInstance("DESede/CBC/NoPadding");
+	    	decipher.init(Cipher.DECRYPT_MODE, key, iv);
+	
+	    	plainText = decipher.doFinal(apdu.getData());
+		}
+		catch (Exception e){
+			System.out.println("Decryption failed... " + e.toString());
+		}
+		
+		System.out.println("PLain before copy " + ": " + new String(plainText));
+		byte[] fakerapdu = Arrays.copyOf(plainText, plainText.length + 2);
+		
+		fakerapdu[plainText.length+0] = (byte) apdu.getSW1();
+		fakerapdu[plainText.length +1] = (byte) apdu.getSW2();
+		return new ResponseAPDU(fakerapdu);		
 	}
 	
 	
@@ -130,6 +156,7 @@ public class Terminal implements GlobalVariables {
 	 */
 	private CommandAPDU doEncryptAPDU(CommandAPDU apdu) {
 		//TODO Do encryption stuff
+		//https://community.oracle.com/thread/1752064?start=0&tstart=0
 		return apdu;
 	}
 	
@@ -179,7 +206,7 @@ public class Terminal implements GlobalVariables {
 			ResponseAPDU rapdu = this.channel.transmit(apdu);
 			
 			if(bEncrypted)
-				this.doDecryptAPDU(rapdu);
+				return this.doDecryptAPDU(rapdu);
 			
 			return rapdu;
 		}
