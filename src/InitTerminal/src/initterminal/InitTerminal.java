@@ -1,7 +1,5 @@
 package initterminal;
 
-import java.util.Scanner;
-
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
 
@@ -37,7 +35,7 @@ public class InitTerminal extends Terminal {
 		else if(rapdu != null && rapdu.getSW() == 0x6300)
 			System.out.println("Instruction not found (Card probably has already been set to issued) ");
 		else {
-			System.out.println("Card could not been set to issued ");
+			System.out.println("Card could not been set to issued. SW " + Integer.toHexString(rapdu.getSW()));
 		}
 	}
 	
@@ -52,7 +50,7 @@ public class InitTerminal extends Terminal {
 		else if(rapdu != null && rapdu.getSW() == 0x6300)
 			System.out.println("Instruction not found (Card probably has already been set to unissued) ");
 		else {
-			System.out.println("Card could not been set to unissued ");
+			System.out.println("Card could not been set to unissued. SW " + Integer.toHexString(rapdu.getSW()));
 		}
 	}
 	
@@ -95,6 +93,13 @@ public class InitTerminal extends Terminal {
 			this.doSetIssued();
 		this.doVerifyPIN();
 		
-		this.doDisconnectCard();
+		
+		CommandAPDU apdu = new CommandAPDU(CLA_ENCRYPTED, 0x41, 0x00, 0x00);
+	    
+	    ResponseAPDU rapdu = this.doTransmit(apdu);
+	    System.out.println("Decryption SW " + Integer.toHexString(rapdu.getSW()) + ": " + new String(rapdu.getData()));
+	    this.doDisconnectCard();
+		System.out.println("Card issue complete, pull out your card. ");
+		
 	}
 }
