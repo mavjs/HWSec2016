@@ -11,6 +11,10 @@ public interface GlobalVariables {
 	public static final byte INS_BALANCE_GET =  (byte) 0x30;
 	public static final byte INS_BALANCE_SUB = (byte) 0x31;
 	public static final byte INS_BALANCE_INC = (byte) 0x32;
+    public static final byte INS_SET_CARD_PRIV_EXP = (byte) 0x51;
+    public static final byte INS_SET_CARD_PUB_EXP = (byte) 0x52;
+    public static final byte INS_SET_CARD_PRIV_MOD = (byte) 0x53;
+    public static final byte INS_SET_CARD_PUB_MOD = (byte) 0x54;
 	
 	public static final byte[] AID = { (byte) 0xCA, (byte) 0xFE,
         (byte) 0xEB, (byte) 0xAB, (byte) 0xEE, (byte) 0x02 };

@@ -1,9 +1,11 @@
 package baseterminal;
 
 import java.nio.ByteBuffer;
+import java.security.KeyPair;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import backend.Storage;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -24,6 +26,7 @@ public class Terminal implements GlobalVariables {
 			(byte) 0x00, (byte) 0xA4, (byte) 0x04, (byte) 0x00, AID);
 	protected CommandAPDU ISSUE_CARD = new CommandAPDU(CLA_UNENCRYPTED, INS_ISSUE, (byte) 0x00, (byte) 0x00);
 	protected CommandAPDU UNISSUE_CARD = new CommandAPDU(CLA_UNENCRYPTED, INS_UNISSUE, (byte) 0x00, (byte) 0x00);
+    final byte[] keyBytes = {(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00}/*Arrays.copyOf(digestOfPassword,24)*/;
 	
 	protected Card card = null;
 	protected CardChannel channel = null;
@@ -115,7 +118,6 @@ public class Terminal implements GlobalVariables {
 		System.out.println("Start decryption for Response with SW:" + Integer.toHexString(apdu.getSW()));
 		byte[] plainText = {};
 		try {
-	    	final byte[] keyBytes = {(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00}/*Arrays.copyOf(digestOfPassword, 24)*/;
 	
 	    	final SecretKey key = new SecretKeySpec(keyBytes, "DESede");
 	    	final IvParameterSpec iv = new IvParameterSpec(new byte[8]);
@@ -155,9 +157,22 @@ public class Terminal implements GlobalVariables {
 	 * Encrypts the APDU
 	 */
 	private CommandAPDU doEncryptAPDU(CommandAPDU apdu) {
-		//TODO Do encryption stuff
-		//https://community.oracle.com/thread/1752064?start=0&tstart=0
-		return apdu;
+        System.out.println("Start Encryption for apdu with INS: " + Integer.toHexString(apdu.getINS()));
+        byte[] cipherText = {};
+        try {
+            final SecretKey key = new SecretKeySpec(this.keyBytes, "DESede");
+            final IvParameterSpec iv = new IvParameterSpec(new byte[8]);
+            final Cipher cipher = Cipher.getInstance("DESede/CBC/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+       
+            cipherText = cipher.doFinal(apdu.getData());
+        }
+        catch (Exception e){
+        System.out.println("Encryption failed... " + e.toString());
+        }
+       
+       
+        return new CommandAPDU(apdu.getCLA(), apdu.getINS(), apdu.getP1(), apdu.getP2(), cipherText);
 	}
 	
 	
@@ -180,6 +195,13 @@ public class Terminal implements GlobalVariables {
 		//Implement in child classes
 	}
 	
+    /*
+    * Get keys
+    */
+    protected KeyPair doGetKeys() {
+    //TODO: Get keypair from files
+    return null;
+    }
 	
 	/*
 	 * Sends apdu to select applet
@@ -252,6 +274,12 @@ public class Terminal implements GlobalVariables {
 			return;
 		
 		//TODO set up mutual authentication and shared key
+        KeyPair keypair = this.doGetKeys();
+        //TODO: Send pub key to card
+        // Get pubkey from card in response data
+        // request symmetric key from card encrypted by cards priv key
+        // decrypt with cards pub key
+        //init DES3 with symmm key
 		
 		//PIN verification
 		if(!this.doVerifyPIN()) {
