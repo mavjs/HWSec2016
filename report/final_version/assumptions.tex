@@ -1,0 +1,22 @@
+\section{Assumptions}
+During the design of the PRS assumptions are made, these are listed below.
+\begin{itemize}
+\item Petrol card:\\
+Every car owner will only have one petrol card. The petrol card is tamper-resistant, and therefore provides integrity and confidentiality to the data and functionality on the card, such as key material. Upon presenting a card to a terminal, the balance on the petrol card can only be modified by an authenticated charging terminal.  Petrol cards will automatically expire and revoked after 5 years.
+
+\item Terminal: all terminals have a reliable clock. The key material and program code on the terminal cannot be copied or modified. The terminals are pre-installed at a secure location by screened personnel.
+
+\item Personalization:\\
+The code created for the PRS has been written by screened personnel and verified by various knowledgeable people whom have not detected backdoors in the code. %Employees working with the back-end or personalisation terminal do not have malicious intentions and have been properly instructed on how to use the system.
+
+\item Charging:\\
+The charging terminal will verify that the petrol balance is only increased once a month. 
+
+\item Pumping:\\
+The pump is trusted to always communicate the right amount of fuel that has been released to the pumping terminal. The pumping terminal is able to store logs of transactions without compromising the integrity or confidentiality of the logs.
+
+\item Back-end:\\
+The key material of the CA cannot be copied. The revocation list maintained by the back end cannot be altered in such a way that already revoked petrol cards or terminal will be removed from the revocation list. 
+\end{itemize}
+
+ 

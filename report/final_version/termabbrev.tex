@@ -1,0 +1,35 @@
+\section{Terminology and abbreviations}
+The following terminology and abbreviations will be used throughout this document. 
+    \begin{center}
+        \begin{tabular}{| l | p{8cm} |}
+            \hline
+            $PRS$ & Petrol Rationing System\\\hline
+            $IT$ & Personalisation terminal, used for the initialisation of the petrol card \\\hline
+            $PT$ & Petrol terminal \\\hline
+            $CT$ & Charging terminal \\\hline
+            &\\\hline
+            \textbf{For the protocols:} &\\\hline
+            $ENC_{SK}\{X\}$ & encryption function for X with symmetric key (SK) agreed to by both parties\\ \hline
+            $SIG[X]_{priv}$ & signing function for X with private key of sender \\ \hline
+            $[X]_{pub}$ & encryption function for X with a public key of the sender \\ \hline
+            $certificate_{X}$ & certificate of X \\ \hline
+            $pub_{X}$ & public key of X \\ \hline
+            $priv_{X}$ & private key of X  \\ \hline
+            $ID_{X}$ & Identification (ID) number of X \\ \hline
+            $SK$ & Symmetric Key \\ \hline
+            $Verify(cert)$ & Certificate Verification function\\ \hline
+            $Log()$ & Logging function to keep track of transactions \\ \hline
+            $T$ & Terminal (charging/petrol) \\ \hline
+            $PC$ & Petrol Card \\ \hline
+            $BE$ & Back-end \\ \hline
+            $VTS$ & Valid timestamp until certificates are considered untrusted (24Hours from the time the CVR was requested) \\ \hline
+            $TS$ & Timestamp \\ \hline
+            $Certs$ & List of certificates that are valid and or revoked \\ \hline
+            $CVR$ & Certificate Validity Request function \\ \hline
+            $PIN$ & PIN number \\ \hline
+            $PIN_{AUTH}$ & Boolean response to indicate validity of PIN \\ \hline
+            $Calc()$ & Petrol points calculation function based on current balance \& pumped amount (in liters) \\ \hline
+            $B$ & current petrol balance (in liters) \\ \hline
+            $UB$ & used up petrol balance (in liters) \\ \hline
+        \end{tabular}
+    \end{center}
