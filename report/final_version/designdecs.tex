@@ -16,7 +16,7 @@ During the design of the project, several design decisions were made, they are l
 \item The IT will set the initial balance to zero.
 \item The PIN codes will be set by the IT.
 \item The CT will relay the signed allowance by the back end to the petrol card.
-\item A symmetric key is used to secure communication between the terminal and back-end.
+\item (*)A symmetric key is used to secure communication between the terminal and back-end. The SK is implemented, but allows the application to crash on some moments, we are unsure why this is the case. 
 \item The petrol allowance on the petrol card can only be charged once a month.
 \item The CT can see the petrol balance stored on the petrol card after the CT has authenticated itself to the petrol card.
 \item The card owner will have to specify the required amount of petrol that he wishes to pump at the PT. In a previous design we planned on subtracting all balance from the petrol card. 
@@ -36,7 +36,7 @@ During the design of the project, several design decisions were made, they are l
 
 \item Back-end
 \begin{itemize}
-\item The back-end will sign and send the latest version of the CRL to the terminals
+\item *The back-end will sign and send the latest version of the CRL to the terminals
 	%\item Will have a signed list of blocked petrol cards that are issued to the terminals.
 %	\item Will have a list of all ID numbers belonging to each petrol card and terminal
 %	\item Will have a sub-CA certificate, the utmost level in the certificate chain apart from the main CA.
@@ -46,14 +46,19 @@ During the design of the project, several design decisions were made, they are l
 
 %\section{Overall design}
 \subsection{PIN codes}
-The user will have to enter a PIN code on the terminal numpad to verify ownership of the petrol card to the terminal. The terminal will send the PIN signed by its private key with the plain text of the PIN to the petrol card through the mutually authenticated encrypted channel. By which the petrol card will reply with whether the PIN number is correct or not.
+The user will have to enter a PIN code on the terminal numpad to verify ownership of the petrol card to the terminal. The terminal will send the PIN signed by its private key with the plain text of the PIN to the petrol card through the mutually authenticated encrypted channel. By which the petrol card will reply with whether the PIN number is correct or not. All specified functionality regarding PIN codes have been implemented. 
 
 \subsection{Cryptography and PKI}
-PKI is used to maintain and generate certificates. The back-end will operate as CA. We planned on creating a sub-CA to sign all terminal and petrol card certificates, but due to time constraints this was not possible. In the current situation the certificate of the main CA will be stored on a newly personalised petrol card. The back-end, terminals and petrol cards will all have a RSA-1024 bit keypair. While this is not secure for real-world purposes, for testing and petrol card limitations, this will have to do. The petrol card and terminals will receive a timestamp of the last update of certificate revocation list which is signed by the main CA certificate. This way it can be verified if the provided revocation list is recent. Each terminal will have the same setup: main CA certificate, its RSA keypair, and signed timestamp of the last updated certificate revocation list. \\
+PKI is used to maintain and generate certificates. The back-end will operate as CA.  In the current situation the certificate of the main CA will be stored on a newly personalised petrol card. The back-end, terminals and petrol cards all have an RSA-1024 bit keypair. While this is not secure, nor recommended for long term use, it will suffice for testing and finding card limitations. The petrol card and terminals will receive a timestamp of the last update of certificate revocation list which is signed by the main CA certificate. This way it can be verified if the provided revocation list is recent. Each terminal will have the same setup: main CA certificate, its RSA keypair, and signed timestamp of the last updated certificate revocation list. \\
 
 The CA certificate on each device is used to verify the validity and authenticity of each certificate during communication. Each end point, i.e petrol card and terminal, will verify the certificate of the other end point it is connecting to. In case the CA is notified of abuse or a breach, the certificate belonging to the end point will only be usable for 24 hours until the revocation list has been pushed to the end points. % At this point it is important to verify if the certificate has not been revoked by the CA. This way when the CA has been notified of abuse or breach in one of the end points, it will only take 24 hours for each end point to know of the revocation of a particular certificate. \\
 
-Public and private keys in each end point will be used in conjunction with the CA certificate to mutually authenticate between each other. It is also used to negotiate a SK and also to provide integrity of the message by signing them.
+Public and private keys in each end point will be used in conjunction with the CA certificate to mutually authenticate between each other. It is also used to negotiate an SK and also to provide integrity of the message by signing them. 
+
+Due to time constraints and technical difficulties it was not possible to implement some aspects of the cryptography and PKI. To keep things simple for testing we created a CA, and not the sub-CA that would be used to sign all terminal and petrol certificates. Any signatures that we wanted to implement on revocation lists or messages were sadly not possible, since we were not able to get a certificate on the petrol card. The terminals and back-end do have their own certificate. We managed to get a SK to work between the petrol card and terminal, however sometimes this functionality gives an error and crashes the system, we are unsure why this happens.
+%Due to technical issues it was not possible to implement the certificate on the petrol card, and thus signing the revocation list. 
+
+
 
  %A certificate consisting of a public and private key will be first created on the back-end (the overall system acting as the Certificate Authority). 
 
@@ -135,21 +140,22 @@ T&: \text{requests monthly allowance from back-end through the encrypted channel
 T&: \text{Log}(TS, ID_{PC}, B, SIG[TS, ID_{PC}, B]_{priv_T}) \\
 T \to PC&: ENC_{SK}\{SIG[B,TS]_{priv_{BE}}, B, TS\}
 \end{split} 
-\end{equation}
+\end{equation}key material
 
 \subsubsection{Invalidating petrol cards}
-Petrol cards are invalidated by the back-end by means of revoking the certificate, which will be added to the revocation list. Cards can be added to the revocation list if the certificate is valid, if authentication of the user failed (incorrect PIN entry for three times), or any other suspicious behaviour \textcolor{red}{Possible other scenarios..}.
+Petrol cards are invalidated by the back-end by means of revoking the certificate, which will be added to the revocation list. Cards can be added to the revocation list if the certificate is valid, if authentication of the user failed (incorrect PIN entry for three times), or any other suspicious behaviour. %\textcolor{red}{Possible other scenarios..}.
 
-
-\textcolor{red}{TODO: explain how persistant and transient states are realised in the code }
+\subsubsection{States petrol card}
+The petrol card can have both a transient and persistent state. The state diagrams for both states are showed in figure 2 and 3. The yellow boxes are the steps the petrol card will go through. The blue boxes are the variables that are recorded in the current state (thus EEPROM or RAM). 
+%\textcolor{red}{TODO: explain how persistent and transient states are realised in the code }
 \begin{figure}[!ht]
   \centering
-    \includegraphics[width=0.8\textwidth]{persistant}
+    \includegraphics[width=0.7\textwidth]{persistant}
       \caption{The persistant states of the petrol card.}
 \end{figure}
 
 \begin{figure}[!ht]
   \centering
-    \includegraphics[width=0.8\textwidth]{transient}
+    \includegraphics[width=0.7\textwidth]{transient}
       \caption{The transient states of the petrol card.}
 \end{figure}
