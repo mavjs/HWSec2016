@@ -1,43 +1,22 @@
 \section{Assumptions}
-During the design of the project, several assumptions were made, they are listed here.
+During the design of the PRS assumptions are made, these are listed below.
 \begin{itemize}
-\item Petrol card
-\begin{itemize}
-	\item A car owner can only have one petrol card.
-	\item The petrol card is tamper-resistant, therefore provide integrity and confidentiality of their data and functionality.
-	\item The balance on the petrol card can only be changed by an authenticated charging terminal
-	\item Key material cannot be copied off the petrol card
-\end{itemize}
+\item Petrol card:\\
+Every car owner will only have one petrol card. The petrol card is tamper-resistant, and therefore provides integrity and confidentiality to the data and functionality on the card, such as key material. Upon presenting a card to a terminal, the balance on the petrol card can only be modified by an authenticated charging terminal.  Petrol cards will automatically expire and revoked after 5 years.
 
-\item Personalization
-\begin{itemize}
-\item Employees have been properly instructed and are trustworthy to not steal key material during the personalization of the petrol cards.
-\item Employees who created the back-end did not have malicious intentions, such as building a backdoor.
-\item Personalization terminals will have a reliable clock.
-\item Key material cannot be copied off the personalisation terminal
-\end{itemize}
+\item Terminal: all terminals have a reliable clock. The key material and program code on the terminal cannot be copied or modified. The terminals are pre-installed at a secure location by screened personnel.
 
-\item Charging
-\begin{itemize}
-\item Charging terminals come pre-installed, or are installed by a trusted company
-\item Charging terminal will have a reliable clock.
-\item Key material cannot be copied off the charging terminal
-\end{itemize}
+\item Initialisation:\\
+The code created for the PRS has been written by screened personnel and verified by various knowledgeable people whom have not detected backdoors in the code. %Employees working with the back-end or personalisation terminal do not have malicious intentions and have been properly instructed on how to use the system.
 
-\item Pumping
-\begin{itemize}
-\item Pumping terminals come pre-installed, or are installed by a trusted company
-\item The pump is trusted to always communicate the right amount of fuel that has been released to the pumping terminal.
-\item Pumping terminal will have a reliable clock.
-\item Key material cannot be copied off the pumping terminal
-\item The pumping terminal is able to store logs of transactions without compromising the integrity or confidentiality of the logs
-\end{itemize}
+\item Charging:\\
+The charging terminal will verify that the petrol balance is only increased once a month. 
 
-\item Back-end
-\begin{itemize}
-\item The key material of the CA cannot be copied
-\item The revocation list maintained by the back end cannot be altered in such a way that already revoked petrol cards or terminal will be removed by the revocation list. 
-\end{itemize}
+\item Pumping:\\
+The pump is trusted to always communicate the right amount of fuel that has been released to the pumping terminal. The pumping terminal is able to store logs of transactions without compromising the integrity or confidentiality of the logs.
+
+\item Back-end:\\
+The key material of the CA cannot be copied. The revocation list maintained by the back end cannot be altered in such a way that already revoked petrol cards or terminal will be removed from the revocation list. 
 \end{itemize}
 
  

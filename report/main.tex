@@ -14,6 +14,7 @@
 \setlength\parindent{0pt} % Geen /newline gezeik ;)
 %\renewcommand{\familydefault}{\ttdefault}
 \renewcommand*\sfdefault{cmss}
+
 \newcommand{\horrule}[1]{\rule{\linewidth}{#1}}
 \title{	
 	\normalfont \normalsize
@@ -33,15 +34,19 @@
 \maketitle
 \newpage
 % Chapters
+\tableofcontents
+\newpage
+\input{termabbrev} % Terminology and abbreviations
 \input{introduction} % Introduction
 \input{usecases} % Usecases
+\newpage
 \input{assets} % Assets
 \input{stakeholders} % Stakeholders
 \input{assumptions} % Assumptions
 \input{attackermod} %Attacker model
 \input{secreq}	%Security Requirements
 \input{designdecs}	% Design decisions
-\input{overalldes} %Overall design
+%\input{overalldes} %Overall design
 %\input{organisation}\newpage
 %\input{reflection}
 

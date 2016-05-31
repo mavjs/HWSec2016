@@ -1,52 +1,54 @@
 \section{Assets}
-Our project case involves the following assets:
+Our project case involves the following assets. Items enlisted with a * have not been implemented in the PRS due to time constraints and/or technical problems.
 \begin{itemize}
 \item Petrol
 
 \item Petrol card
 \begin{itemize}
- \item Current balance on the petrol card
- \item Card identification number
+ \item *Card certificate, created with its own public and private keypair.
+ \item *Certificate from CA.
+ \item *Signed timestamp of last requested revocation list received from CA.
+ \item Timestamp indicating last charge.
+ \item Current balance on the petrol card.
+% \item Card identification number
  \item PIN code
- \item Timestamp indicating last charge
- \item Public and private key; created during personalisation
- \item Certificate from CA
- \item Signed timestamp of last checked revocation list by CA
 \end{itemize}
 
- \item Personalization terminals
+ \item Initialisation terminals
  \begin{itemize}
-	\item Certificate from CA
-	\item Public and private key created for secure communication
+ \item Terminal certificate, created with its own public and private keypair.
+ \item Certificate from CA.
+ %\item Public and private key created for secure communication
+% \item \textcolor{red}{TODO: check in code what other data is stored on IT}
+ \item Terminal identification number.
  \end{itemize}
  
  \item Charging terminals
  \begin{itemize}
- 	\item Current monthly allowance that will be charged to all petrol cards
- 	\item List of blocked cards
- 	\item Public and private key; created during personalisation
- 	\item Signed timestamp of last checked revocation list by CA
-  	\item Certificate from CA
+    \item Terminal certificate, created with its own public and private keypair.
+   	\item Certificate from CA
+   	\item *Signed timestamp of last requested revocation list received from CA
+ 	\item Current monthly allowance that will be provided to all charging terminals
 	\item List of revoked certificates
  \end{itemize}
 
  
  \item Petrol terminals
  \begin{itemize}
+  	\item Terminal certificate, created with its own public and private keypair
   	\item Certificate from CA
- 	\item List of blocked cards
- 	\item Public and private key; created during personalisation
- 	\item Signed timestamp of last checked revocation list by CA
+ 	\item  *Signed timestamp of last requested revocation list received from CA
  	\item List of revoked certificates
  \end{itemize}
 
  \item Back-end
  \begin{itemize}
- 	\item Public and private key
- 	\item List of revoked certificates
- 	\item List of ID numbers associated with each terminal and cards
- 	\item list of revoked petrol cards
+ 	\item Backend certificate, created with its own public and private key
  	\item Current monthly allowance that will be provided to all charging terminals
+ 	\item List of all generated certificates for terminals and petrol cards
+ 	\item List of revoked certificates
+ 	\item *The back-end will have a sub-CA certificate
+ 	\item *The main CA certificate will only be used to sign and revoke sub-CA certificates
  \end{itemize}
-
 \end{itemize}
+

@@ -1,19 +1,14 @@
 \section{Attacker model}
-At any point in time it is likely that an attacker will perform a MiTM or a card tear. The compromise of a key material on the card should not bring down the entire petrol system. The attackers will not be able to tamper with the petrol cards, nor will they be able to build a backdoor in the software of the terminals.
+At any point in time it is likely that an attacker will try to perform an attack on the PRS. Likely adversaries for the PRS are: (organised) criminals, insiders and researchers. While most of the adversaries' capabilities, intentions and skills are alike, some may vary. Organised criminals are most likely to make money e.g. by obtaining and selling more petrol than rationed (or without collecting rations) and by obtaining legitimately issued petrol cards. To reach their goal they are more likely to take actions as extortion and violence. This group usually has the availability of large amounts of money to accomplish their goals. \\
 
-We will now broadly define $3$ categories of attackers, although overlap may occur. For example research may fall into the hands of criminals. 
+Insiders have access or knowledge on the PRS and are familiar with the weak spots of the system. They will know or find ways to use this to their advantage. This group may try to bring down, or sabotage the workings of the system for a larger group of users. Attacks made by this group are likely to be accomplished with limited resources or money.  \\
 
-\begin{itemize}
+Researchers are sometimes provided with full specifications on a system and  protocols. They are likely to break protocols such that they can intercept and manipulate any traffic between the petrol card and a terminal. This group will typically include researchers at an university, or a company hired to test the security of the system. The goals will be to break the security of the PRS in any way, which sometimes can result in a publication. This group usually has limited time and/or resources to accomplish their goals. 
 
-\item (Organised) criminals
+Attacks by these adversaries can include, but are not limited to, MiTM, card tears and compromisation of key material. In case key material of a petrol card is compromised it should not bring down the PRS. An adversary will not be able to tamper with the petrol cards, nor will they be able to build a backdoor in the software of the terminals. 
 
-This groups capabilities will include organised crime such as extortion and violence to obtain legitimately issued petrol cards. On the other hand it will also include card owners who may intentionally try to game the system by removing the petrol card from the terminal during a transaction. This group will mostly try to obtain more petrol than rationed.
+%\textcolor{red}{All attackers have the possibility to perform a denial of service on the petrol cards, by THIS IS WHERE I LEFT OFF!..}
 
-\item Insiders
+%This groups capabilities will include organised crime such as extortion and violence to obtain legitimately issued petrol cards. On the other hand it will also include card owners who may intentionally try to game the system by removing the petrol card from the terminal during a transaction. This group will mostly try to obtain more petrol than rationed.
 
-Members of this group will have some sort of access to the inner workings of the system. This includes configuration of any of the terminals the system uses within the limits allowed by the software. It also includes the designers of the system, who are not to be trusted with the master key. This group may try to bring down or sabotage the workings of the system for a larger group of users.
-
-\item Researchers
-This group is sometimes provided with full specification on a system or it's protocols. They are likely to break protocols such that they can intercept and manipulate any traffic between the petrol card and a terminal. This group will typically include researchers at an university, which gives an indication of the amount of time and money available. The goal of this group will be to break the security model in any way worthy of a publication.
- 
-\end{itemize}
+%\end{itemize}

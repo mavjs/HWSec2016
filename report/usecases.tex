@@ -1,22 +1,31 @@
 % !TeX root = main.tex
 
 \section{Use cases}
-The use cases we have defined are:
-\begin{itemize}
+The PRS has five use cases which describes the life-cycle from initialisation to revocation of a petrol card. Figure 1 depicts the PRS life-cycle. 
 
-\item Personalisation of the petrol card with the issuer terminal (IT):\\
-During the personalisation phase the petrol card will have to be initialised with key material, a card identification number and the current petrol balance will be set to zero. This will be done by the card issuer with their issuer terminal. The petrol card will also have to be registered to a car owner and a check needs to be in place to see if the car owner didn't already receive a petrol card, however this is out of the scope of this document.
+\begin{itemize}
+\item Initialisation of the petrol card with the issuer terminal (IT):\\
+During the personalisation phase the petrol card will be initialised with key material, a card identification number (both provided by back-end) and the current petrol balance will be set to zero. 
+%A process (out of scope) needs to be in place to e.g. register the petrol card to the car owner. 
 
 \item Charging the petrol card at the charging terminal (CT): \\
-Each month the charging terminal will receive a petrol allowance update. This update determines the petrol allowance that will be written to all petrol cards. Once a petrol card presents itself, the charging terminal will have to validate if the petrol card is still valid, if it is the card owner will have to enter a PIN to authenticate himself to the terminal. The card owner can then choose to either view his current balance or charge the monthly petrol allowance to his petrol card balance. Writing petrol allowances to petrol card balances will not be possible once, sub-charges during the month will not be possible. The new petrol balance on the petrol card will be immediately available for getting petrol. 
+The charging terminal will receive a monthly update for the petrol allowance from the back-end, which determines the amount of petrol that will be written to all petrol cards. For each presented petrol card a validation is needed if the petrol card is still valid, afterwards the card owner can charge the full monthly petrol allowance to his petrol card balance. Sub-charges of the petrol allowance are not possible. The updated balance will be immediately available for use. 
 
 \item Getting petrol at the petrol terminal (PT):\\
-At the petrol terminal the card owner is able to get petrol. He presents his petrol card to the PT, where he can see his current petrol allowance, after choosing the type of petrol, the PT will remove the current petrol balance from the petrol card by writing a balance of zero. After the transaction has been completed the updated balance will be written back to the petrol card. 
+At the petrol terminal the card owner presents his petrol card. The card owner is able to see his current petrol allowance, after choosing the type of petrol and the amount of petrol he wishes to buy, the PT will remove the chosen petrol balance from the petrol card. %After the transaction has been completed the updated balance will be written back to the petrol card. 
 
 \item End-of-life: \\
-Once a card reaches end-of-life (EOL), it has to be blocked and possibly decomissioned. 
+Once a card reaches end-of-life (EOL), it has to be blocked and possibly decommissioned. After 5 years petrol cards will automatically be blocked.
 
 \item Stolen Card: \\
-If a card gets stolen, the identification number of the card and all it's key material will have to be blocked and revoked. During the night, all petrol and charging terminals will be updated with a list of blocked petrol cards. After 5 years, the petrol card will automatically be blocked.
+If a card is stolen or lost, all key material and certificates needs to be revoked. All petrol and charging terminals will receive an updated revocation list during the night. 
+
+%The image shows the life-cycle of the PRS. 
+\begin{figure}[!ht]
+  \centering
+    \includegraphics[width=0.8\textwidth]{lifecycle}
+      \caption{The life-cycle of a petrol card in the PRS.}
+
+\end{figure}
 
 \end{itemize}
